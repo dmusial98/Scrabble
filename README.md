@@ -1,2 +1,1 @@
 # Scrabble
-Scrabble
