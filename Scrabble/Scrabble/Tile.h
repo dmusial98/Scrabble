@@ -1,0 +1,49 @@
+#ifndef LETTER_H
+#define LETTER_H
+
+#include <SFML\Graphics.hpp>
+#include "Constexpr.h"
+#include<iostream>
+#include <string>
+
+class Tile {
+	char letter;
+	int value;
+	bool used = false;  //if is in own tiles
+	bool last_used = false;  //if is on the board
+	bool tick = false;
+	
+	//SFML variables
+	sf::Texture texture;
+	sf::RectangleShape sprite;
+
+public:
+	Tile(char let, int val);
+	Tile() = default;
+	~Tile() = default;
+
+	
+	bool get_used();
+	void set_used(bool set);
+	bool get_last_used();
+	void set_last_used(bool s);
+	bool get_tick();
+	void set_tick(bool s);
+	char get_letter();
+	void set_letter(char let);
+	int get_value();
+
+	sf::Vector2f get_sprite_position();
+	void set_sprite_position(sf::Vector2f pos);
+	void set_outline(sf::Color col);
+	void reset_outline();
+	
+	void set_sprite();
+	void display(float x, float y, sf::RenderWindow &window);
+	void display(sf::RenderWindow &window);
+
+
+};
+
+
+#endif LETTER_H
