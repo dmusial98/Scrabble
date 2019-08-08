@@ -11,7 +11,7 @@ protected:
 	Tile* tile = nullptr;	
 
 public:
-	virtual void display(sf::RenderWindow &window);
+	virtual void display(sf::RenderWindow &window, float scale_x, float scale_y);
 
 	virtual void set_tile(Tile *t);
 	virtual Tile * get_tile();

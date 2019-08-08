@@ -47,11 +47,13 @@ Game::Game()
 		}
 	}
 
+	count_scale();
+
 	set_font();
 	set_texts_start();
 	setSprite();
 
-	window.create(sf::VideoMode(1286, 965), "Scrabble");
+	window.create(sf::VideoMode(1286 * scale_x, 965 * scale_y), "Scrabble");
 
 	std::vector<std::string> players_strings;
 
@@ -72,6 +74,10 @@ Game::Game()
 	//display points with names of players
 
 	set_players_pos(players_strings);
+
+	/*std::cout << GetSystemMetrics(0) << std::endl << GetSystemMetrics(1) << std::endl;
+
+	std::cout << GetSystemMetrics(16) << std::endl << GetSystemMetrics(17) << std::endl;*/
 }
 
 Game::~Game()
@@ -83,6 +89,14 @@ Game::~Game()
 			delete board[i][j];
 		}
 	}
+}
+
+void Game::count_scale()
+{
+	//std::cout << GetSystemMetrics(16) << std::endl << GetSystemMetrics(17) << std::endl;
+
+	scale_x = GetSystemMetrics(16) / 1920.f;
+	scale_y = GetSystemMetrics(17) / 1057.f;
 }
 
 void Game::display_players()
@@ -108,29 +122,30 @@ void Game::set_players_pos(std::vector<std::string>& vec)
 			max_length = vec[i].length();
 	}
 
-	float x, y = 60.;
+	float x = 60. * scale_x, y = 60. * scale_y;
 
 	if (max_length <= 3)
 	{
-		x = 990.;
+		x = 990. * scale_x;
 	}
 	else if(max_length < 5)
 	{
-		x = 950.;
+		x = 950. * scale_x;
 	}
 	else if (max_length < 8)
 	{
-		x = 920.;
+		x = 920. * scale_x;
 	}
 	else 
 	{
-		x = 890.;
+		x = 890. * scale_x;
 	}
 	
 	for (int i = 0; i < players_texts.size(); i++)
 	{
 		players_texts[i].setPosition(x, y);
-		y += 50.f;
+		players_texts[i].setCharacterSize(players_texts[i].getCharacterSize() * scale_x);
+		y += 50.f * scale_y;
 	}
 }
 
@@ -155,11 +170,11 @@ void Game::setSprite()
 	if (!texture.loadFromFile("Textures/Plansza.png"))
 		std::cout << "Board loading error\n";
 	if (!menu_texture.loadFromFile("Textures/Background.png"))
-		std::cout << "Mennu texture's loading error\n";
+		std::cout << "Menu texture's loading error\n";
 	board_sprite.setTexture(texture);
-	board_sprite.setScale(scale, scale);
+	board_sprite.setScale(board_scale * scale_x, board_scale* scale_y);
 	menu_sprite.setTexture(menu_texture);
-	menu_sprite.setScale(scale, scale);
+	menu_sprite.setScale(board_scale * scale_x, board_scale* scale_y);
 }
 
 void Game::set_texts_start()
@@ -171,13 +186,13 @@ void Game::set_texts_start()
 	info_text.setFont(font);
 	in_text.setFont(font);
 	
-	welcome_text.setCharacterSize(50);
-	info_text.setCharacterSize(30);
-	in_text.setCharacterSize(28);
+	welcome_text.setCharacterSize(50 * scale_x);
+	info_text.setCharacterSize(30 * scale_x);
+	in_text.setCharacterSize(28 * scale_x);
 
-	welcome_text.setPosition(360.f, 380.f);
-	info_text.setPosition(385.f, 480.f);
-	in_text.setPosition(635.f, 550.f);
+	welcome_text.setPosition(360.f * scale_x, 380.f * scale_y);
+	info_text.setPosition(385.f * scale_x, 480.f * scale_y);
+	in_text.setPosition(635.f * scale_x, 550.f * scale_y);
 }
 
 void Game::set_texts_pl_names(int number)
@@ -199,11 +214,11 @@ void Game::set_texts_pl_names()
 {
 	in_text.setString("");
 	welcome_text.setString("");
-	info_text.setPosition(250.f, 400.f);
-	info_text.setCharacterSize(45);
+	info_text.setPosition(250.f * scale_x, 400.f * scale_y);
+	info_text.setCharacterSize(45 * scale_x);
 
-	in_text.setPosition(580.f, 520.f);
-	in_text.setCharacterSize(35);
+	in_text.setPosition(580.f * scale_x, 520.f * scale_y);
+	in_text.setCharacterSize(35 * scale_x);
 }
 
 void Game::control()
@@ -223,10 +238,10 @@ void Game::control()
 			{
 				if
 					(
-						mouse_position.x > left_border_own_tiles_pix
-						&&	mouse_position.x < right_border_own_tiles_pix
-						&&	mouse_position.y > up_border_own_tiles_pix
-						&&	mouse_position.y < down_border_own_tiles_pix
+						mouse_position.x > left_border_own_tiles_pix * scale_x
+						&&	mouse_position.x < right_border_own_tiles_pix * scale_x
+						&&	mouse_position.y > up_border_own_tiles_pix * scale_y
+						&&	mouse_position.y < down_border_own_tiles_pix * scale_y
 						)  //get tile from own tiles of player
 
 				{
@@ -235,10 +250,10 @@ void Game::control()
 
 				else if
 					(
-						mouse_position.x > left_border_pix
-						&&	mouse_position.x < right_border_pix
-						&&	mouse_position.y > up_border_pix
-						&&	mouse_position.y < down_border_pix
+						mouse_position.x > left_border_pix * scale_x
+						&&	mouse_position.x < right_border_pix * scale_x
+						&&	mouse_position.y > up_border_pix * scale_y
+						&&	mouse_position.y < down_border_pix * scale_y
 						)  //shift tile from field on different field or own tiles
 				{
 					control_board_left(mouse_position);
@@ -247,10 +262,10 @@ void Game::control()
 			else if (event.mouseButton.button == sf::Mouse::Button::Right)
 			{
 				if (
-					mouse_position.x > left_border_pix
-					&&	mouse_position.x < right_border_pix
-					&&	mouse_position.y > up_border_pix
-					&&	mouse_position.y < down_border_pix
+					mouse_position.x > left_border_pix * scale_x
+					&&	mouse_position.x < right_border_pix * scale_x
+					&&	mouse_position.y > up_border_pix * scale_y
+					&&	mouse_position.y < down_border_pix * scale_y
 					)  
 				{
 					control_board_right(mouse_position);
@@ -323,7 +338,7 @@ void Game::display_all()
 	{
 		for (int j = 0; j < no_of_field; j++)
 		{
-			board[i][j]->display(window);
+			board[i][j]->display(window, scale_x, scale_y);
 		}
 	}  //all tiles on board
 
@@ -357,10 +372,10 @@ void Game::exchange_tiles()
 					sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 					if
 						(
-							mouse_position.x > left_border_own_tiles_pix
-							&&	mouse_position.x < right_border_own_tiles_pix
-							&&	mouse_position.y > up_border_own_tiles_pix
-							&&	mouse_position.y < down_border_own_tiles_pix
+							mouse_position.x > left_border_own_tiles_pix * scale_x
+							&&	mouse_position.x < right_border_own_tiles_pix * scale_x
+							&&	mouse_position.y > up_border_own_tiles_pix * scale_y
+							&&	mouse_position.y < down_border_own_tiles_pix * scale_y
 							)  //get tile from own tiles of player
 					{
 						int index = get_number_own_tile(true);
@@ -407,14 +422,14 @@ sf::Vector2u Game::get_field_index()
 	int y = no_of_field + 1;
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 
-	if (mouse_position.x > left_border_pix
-		&& mouse_position.y > up_border_pix
-		&& mouse_position.x < right_border_pix
-		&& mouse_position.y < down_border_pix
+	if (mouse_position.x > left_border_pix * scale_x
+		&& mouse_position.y > up_border_pix * scale_y
+		&& mouse_position.x < right_border_pix * scale_x
+		&& mouse_position.y < down_border_pix * scale_y
 		)
 	{
-		x = static_cast<int>((mouse_position.x - left_border_pix) / tile_size_pix);
-		y = static_cast<int>((mouse_position.y - up_border_pix) / tile_size_pix);
+		x = static_cast<int>((mouse_position.x - left_border_pix * scale_x) / (tile_size_pix * scale_x));
+		y = static_cast<int>((mouse_position.y - up_border_pix * scale_y) / (tile_size_pix * scale_y));
 	}
 
 	return sf::Vector2u(x, y);
@@ -425,14 +440,14 @@ sf::Vector2u Game::get_field_index(sf::Vector2i & mouse_position)
 	int x = no_of_field + 1;
 	int y = no_of_field + 1;
 
-	if (mouse_position.x > left_border_pix
-		&& mouse_position.y > up_border_pix
-		&& mouse_position.x < right_border_pix
-		&& mouse_position.y < down_border_pix
+	if (mouse_position.x > left_border_pix * scale_x
+		&& mouse_position.y > up_border_pix * scale_y
+		&& mouse_position.x < right_border_pix * scale_x
+		&& mouse_position.y < down_border_pix * scale_y
 		)
 	{
-		x = static_cast<int>((mouse_position.x - left_border_pix) / tile_size_pix);
-		y = static_cast<int>((mouse_position.y - up_border_pix) / tile_size_pix);
+		x = static_cast<int>((mouse_position.x - left_border_pix * scale_x) / (tile_size_pix * scale_x));
+		y = static_cast<int>((mouse_position.y - up_border_pix * scale_y) / (tile_size_pix * scale_y));
 	}
 
 	return sf::Vector2u(x, y);
@@ -450,7 +465,7 @@ int Game::get_number_own_tile(bool from)
 {
 	sf::Vector2i mouse_position = sf::Mouse::getPosition(window);
 
-	int index = static_cast<int>((mouse_position.x - left_border_own_tiles_pix) / (tile_size_pix + right_translation_own_tile));
+	int index = static_cast<int>((mouse_position.x - left_border_own_tiles_pix * scale_x) / (tile_size_pix * scale_x + right_translation_own_tile * scale_x));
 
 	if (from)
 	{
@@ -1064,7 +1079,7 @@ void Game::create_inf_window(std::vector<std::string> &inc_words)
 
 void Game::set_inf_window(std::string name)
 {
-	info_window.create(sf::VideoMode{ 400, 250 }, name);
+	info_window.create(sf::VideoMode( 400 * scale_x, 250 * scale_y ), name);
 	menu_sprite.setPosition(-30.f, -30.f);
 	info_window.draw(menu_sprite);
 }
@@ -1148,7 +1163,7 @@ int Game::player_no_input()
 			// Handle ASCII characters only
 			if (event.text.unicode < 128)
 			{
-				if (event.text.unicode != Enter && event.text.unicode != Escape &&
+				if (event.text.unicode != Enter && event.text.unicode != Escape_ &&
 					event.text.unicode >= '0' && event.text.unicode <= '9')
 					//Handle only digitals
 				{
@@ -1185,7 +1200,7 @@ int Game::player_no_input()
 						in_text.setString(str);
 					}
 				}
-				else if (event.text.unicode == Escape)
+				else if (event.text.unicode == Escape_)
 				{
 					window.close();
 					throw EX_exit{};
@@ -1229,7 +1244,7 @@ std::vector<std::string> Game::get_players_names(int no)
 			// Handle ASCII characters only
 			if (event.text.unicode < 128)
 			{
-				if (event.text.unicode != Enter && event.text.unicode != Escape)
+				if (event.text.unicode != Enter && event.text.unicode != Escape_)
 				{
 					if (event.text.unicode == Backspace) {
 						if (str.length() != 0) {
@@ -1269,7 +1284,7 @@ std::vector<std::string> Game::get_players_names(int no)
 						in_text.setString(str);
 					}
 				}
-				else if (event.text.unicode == Escape)
+				else if (event.text.unicode == Escape_)
 				{
 					window.close();
 					throw EX_exit{};
@@ -1355,7 +1370,7 @@ void Game::control_board_left(sf::Vector2i & mouse_position)
 					window.pollEvent(event);
 					board[index.x][index.y]->get_tile()->set_tick(true);
 					board[index.x][index.y]->get_tile()->set_sprite_position(
-						sf::Vector2f(sf::Mouse::getPosition(window)) + shift_vector);
+						sf::Vector2f(sf::Mouse::getPosition(window)) + shift_vector * scale_x);
 					display_all();
 				} while (event.type != sf::Event::MouseButtonReleased);
 
@@ -1372,10 +1387,10 @@ void Game::control_board_left(sf::Vector2i & mouse_position)
 				}
 				else if
 					(
-						mouse_position.x > left_border_own_tiles_pix
-						&&	mouse_position.x < right_border_own_tiles_pix
-						&&	mouse_position.y > up_border_own_tiles_pix
-						&&	mouse_position.y < down_border_own_tiles_pix
+						mouse_position.x > left_border_own_tiles_pix * scale_x
+						&&	mouse_position.x < right_border_own_tiles_pix * scale_x
+						&&	mouse_position.y > up_border_own_tiles_pix * scale_y
+						&&	mouse_position.y < down_border_own_tiles_pix * scale_y
 						)
 				{
 					int index_own_tile = get_number_own_tile(false);
@@ -1516,7 +1531,8 @@ char Game::create_inf_window(std::string title, std::string comment, bool wait_l
 	sf::Text text;
 	text.setString(comment);
 	text.setFont(font);
-	text.setPosition(50, 30);
+	text.setCharacterSize(text.getCharacterSize() * scale_x);
+	text.setPosition(50 * scale_x, 30 * scale_y);
 	info_window.draw(menu_sprite);
 	info_window.draw(text);
 	info_window.display();
@@ -1534,8 +1550,11 @@ void Game::display_inc_words(std::vector<std::string> &words)
 	text1.setFont(font);
 	text2.setFont(font);
 	text1.setString("Incorrect words:");
-	text1.setPosition(72, 30);
-	
+	text1.setPosition(72 * scale_x, 30 * scale_y);
+	text1.setCharacterSize(text1.getCharacterSize() * scale_x);
+	text2.setCharacterSize(text2.getCharacterSize() * scale_x);
+
+
 	std::string str;
 	for (int i = 0; i < words.size(); i++) 
 	{
@@ -1544,7 +1563,7 @@ void Game::display_inc_words(std::vector<std::string> &words)
 	}
 
 	text2.setString(str);
-	text2.setPosition(150, 70);
+	text2.setPosition(150* scale_x, 70 * scale_y);
 
 	info_window.draw(text1);
 	info_window.draw(text2);

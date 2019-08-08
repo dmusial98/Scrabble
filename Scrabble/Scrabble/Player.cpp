@@ -2,6 +2,9 @@
 
 Player::Player(Bag &bag, std::string n) : name(n)
 {
+	scale_x = GetSystemMetrics(16) / 1920.f;
+	scale_y = GetSystemMetrics(17) / 1057.f;
+
 	get_tiles(bag);
 }
 
@@ -70,8 +73,8 @@ void Player::display_own_tiles(sf::RenderWindow & window)
 		{
 			if (!own_tiles[i]->get_tick() && !own_tiles[i]->get_last_used())
 			{
-				own_tiles[i]->set_sprite_position(sf::Vector2f(left_border_own_tiles_pix + i * (tile_size_pix + right_translation_own_tile),
-					up_border_own_tiles_pix));
+				own_tiles[i]->set_sprite_position(sf::Vector2f((left_border_own_tiles_pix * scale_x) + i * (tile_size_pix * scale_x + right_translation_own_tile * scale_x),
+					up_border_own_tiles_pix * scale_y));
 			}
 
 			own_tiles[i]->display(window);

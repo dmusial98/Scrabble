@@ -39,6 +39,8 @@
 #include <fstream>
 #include <algorithm>
 #include <typeinfo>
+#include<Windows.h>
+#pragma warning(disable:4996)
 
 class Game {
 
@@ -47,6 +49,8 @@ class Game {
 	int turn = 1;
 	Bag bag;
 	Dictionary dictionary;
+	float scale_x = 1, scale_y = 1;
+
 
 	//SFML variables
 	sf::Texture texture, menu_texture;
@@ -70,6 +74,7 @@ class Game {
 	struct EX_end_game {};
 	//exceptions
 
+	void count_scale();
 	void display_players();
 	void set_players_pos(std::vector<std::string> &vec);
 	void update_points();

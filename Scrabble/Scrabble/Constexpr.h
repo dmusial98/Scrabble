@@ -18,7 +18,7 @@ constexpr float right_border_own_tiles_pix = 657.3f;
 constexpr float down_border_own_tiles_pix = 916.5f;
 constexpr float right_translation_own_tile = 2.4f;
 
-constexpr float scale = 1.071428f;
+constexpr float board_scale = 1.071428f;
 
 #pragma endregion
 
@@ -26,7 +26,7 @@ constexpr float scale = 1.071428f;
 #pragma region KEYS 
 
 constexpr int Enter = 13;
-constexpr int Escape = 27;
+constexpr int Escape_ = 27;
 constexpr int Backspace = 8;
 constexpr int zero = 0;
 constexpr int nine = 57;

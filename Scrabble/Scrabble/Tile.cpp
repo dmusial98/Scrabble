@@ -2,7 +2,10 @@
 
 Tile::Tile(char let, int val) : value(val), letter(let), used(false), last_used(false)
 {
-	set_sprite();
+	float scale_x = GetSystemMetrics(16) / 1920.f;
+	float scale_y = GetSystemMetrics(17) / 1057.f;
+
+	set_sprite(scale_x, scale_y);
 }
 
 bool Tile::get_used()
@@ -71,7 +74,7 @@ void Tile::reset_outline()
 	sprite.setOutlineThickness(0.0f);
 }
 
-void Tile::set_sprite()
+void Tile::set_sprite(float scale_x, float scale_y)
 {
 	std::string file_name{ "Textures/Tiles/English/"};
 	file_name += static_cast<char>(letter - 32);
@@ -89,7 +92,7 @@ void Tile::set_sprite()
 	}
 
 	sprite.setTexture(&texture);
-	sprite.setSize(sf::Vector2f(49.f, 49.f));
+	sprite.setSize(sf::Vector2f(49.f * scale_x, 49.f * scale_y));
 }
 
 void Tile::display(float x, float y, sf::RenderWindow &window)

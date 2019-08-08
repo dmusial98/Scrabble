@@ -5,6 +5,7 @@
 #include "Constexpr.h"
 #include<iostream>
 #include <string>
+#include<Windows.h>
 
 class Tile {
 	char letter;
@@ -38,7 +39,7 @@ public:
 	void set_outline(sf::Color col);
 	void reset_outline();
 	
-	void set_sprite();
+	void set_sprite(float scale_x, float scale_y);
 	void display(float x, float y, sf::RenderWindow &window);
 	void display(sf::RenderWindow &window);
 

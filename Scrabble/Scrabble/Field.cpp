@@ -1,12 +1,12 @@
 #include "Field.h"
 
-void Field::display(sf::RenderWindow &window)
+void Field::display(sf::RenderWindow &window, float scale_x, float scale_y)
 {
 	if (tile) {
-		if(tile->get_tick())
+		if (tile->get_tick())
 			tile->display(window);
 		else
-			tile->display(left_border_pix + tile_size_pix * x, up_border_pix + tile_size_pix * y, window);
+			tile->display(left_border_pix * scale_x + tile_size_pix * x * scale_x , up_border_pix * scale_y + tile_size_pix * y  *scale_y, window);
 	}
 }
 

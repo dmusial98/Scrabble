@@ -14,6 +14,9 @@ class Player {
 	std::string name;
 	bool empty_tiles = true;
 
+	float scale_x = 1;
+	float scale_y = 1;
+
 public:
 	struct EX_exchange_lack_of_tiles {};
 	
