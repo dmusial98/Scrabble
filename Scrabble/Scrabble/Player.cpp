@@ -52,6 +52,8 @@ Tile * Player::get_tile(int index)
 {
 	if (index >= 0 && index < 7)
 		return own_tiles[index];
+	else 
+		return nullptr;
 }
 
 void Player::set_tile(int index, Tile *t)

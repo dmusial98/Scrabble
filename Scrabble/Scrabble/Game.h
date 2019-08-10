@@ -1,13 +1,11 @@
 //TO_DO
 //-Stawianie literek z w³asnych na w³asne
 //
-//- Brak informacji o iloœci p³ytek pozosta³ych w woreczku
 //- Po najechaniu na blanku niech wyœwietla informacjê jak¹ literê zastêpuje
 //- Brak oddania tury
 //- Brak przycisków do wybrania opcji
 //- Brak opcji w³¹czenia historii s³ów
 //- Wybrane sprawdzenie :
-//-Potrzebna skalowalnoœæ ekranu dla komputerów z mniejsz¹ rozdzielczoœci¹
 //
 //- wymiana tylu p³ytek ile zosta³o w worku(byle nie wiêcej!)
 //- Error gdy przy wyborze p³ytek do wymiany kliknie siê na wolne pole : (((
@@ -58,7 +56,7 @@ class Game {
 	sf::RenderWindow window, info_window;
 	sf::Font font;
 	std::vector<sf::Text> players_texts;
-	sf::Text welcome_text, info_text, in_text;
+	sf::Text welcome_text, info_text, in_text, tiles_in_bag;
 	sf::Event event;
 	
 	enum Orientation { upright = 0, horizontally, none, exception };
@@ -78,12 +76,15 @@ class Game {
 	void display_players();
 	void set_players_pos(std::vector<std::string> &vec);
 	void update_points();
+	void update_no_tiles_in_bag();
 	void set_font();
 	void setSprite();
 	void set_texts_start();
 	void set_texts_pl_names(int number);
 	void set_texts_pl_names();
+	void set_text_no_tiles_in_bag();
 	void display_start();
+	void display_tiles_in_bag();
 	void display_all();
 	//setting and displaying game
 	
@@ -102,6 +103,7 @@ class Game {
 	bool check_adjacent_field_y(Field array[], int number, int position);
 	bool check_tiles_in_one_line(sf::Vector2i min, sf::Vector2i max, Orientation orient);
 	Field * get_new_tiles(Field array[], int &index);
+
 	bool check_tiles_on_board();
 	void blank(bool reset);
 	void count_points(int mini_ind, int max_ind, int &points, Field field, Orientation orient);

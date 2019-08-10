@@ -52,6 +52,7 @@ Game::Game()
 	set_font();
 	set_texts_start();
 	setSprite();
+	set_text_no_tiles_in_bag();
 
 	window.create(sf::VideoMode(1286 * scale_x, 965 * scale_y), "Scrabble");
 
@@ -74,10 +75,6 @@ Game::Game()
 	//display points with names of players
 
 	set_players_pos(players_strings);
-
-	/*std::cout << GetSystemMetrics(0) << std::endl << GetSystemMetrics(1) << std::endl;
-
-	std::cout << GetSystemMetrics(16) << std::endl << GetSystemMetrics(17) << std::endl;*/
 }
 
 Game::~Game()
@@ -93,8 +90,6 @@ Game::~Game()
 
 void Game::count_scale()
 {
-	//std::cout << GetSystemMetrics(16) << std::endl << GetSystemMetrics(17) << std::endl;
-
 	scale_x = GetSystemMetrics(16) / 1920.f;
 	scale_y = GetSystemMetrics(17) / 1057.f;
 }
@@ -155,8 +150,17 @@ void Game::update_points()
 
 	for (int i = 0; i < players_texts.size(); i++)
 	{
-		players_texts[i].setString(players[i].get_name() + "   " + _itoa(players[i].get_points(), temp, 10));
+		players_texts[i].setString(players[i].get_name() + "   " + _itoa(players[i].get_points(), temp, 10) );
 	}
+}
+
+void Game::update_no_tiles_in_bag()
+{
+	char temp[5];
+
+	std::string str;
+	str = "Tiles in bag: ";
+	tiles_in_bag.setString(str + (_itoa(bag.get_number_of_free_tiles() + 1, temp, 10)));
 }
 
 void Game::set_font()
@@ -221,12 +225,21 @@ void Game::set_texts_pl_names()
 	in_text.setCharacterSize(35 * scale_x);
 }
 
+void Game::set_text_no_tiles_in_bag()
+{
+	tiles_in_bag.setFont(font);
+	tiles_in_bag.setCharacterSize(40);
+	tiles_in_bag.setPosition((right_border_own_tiles_pix + 240.f)* scale_x, up_border_own_tiles_pix * scale_y);
+	update_no_tiles_in_bag();
+}
+
 void Game::control()
 {
 	while (window.isOpen()) {
 
 		sf::Vector2i mouse_position;
 
+		update_no_tiles_in_bag();
 		display_all();
 		window.waitEvent(event);
 
@@ -329,6 +342,11 @@ void Game::display_start()
 	window.display();
 }
 
+void Game::display_tiles_in_bag()
+{
+	window.draw(tiles_in_bag);
+}
+
 void Game::display_all()
 {
 	window.clear();
@@ -343,6 +361,7 @@ void Game::display_all()
 	}  //all tiles on board
 
 	display_players();
+	display_tiles_in_bag();
 
 	players[turn - 1].display_own_tiles(window);
 
@@ -799,6 +818,7 @@ void Game::end_game()
 	players[pl_without_tiles] += all_points;
 	//adding and substracting points after last move
 	update_points();
+	update_no_tiles_in_bag();
 	reset_outline_tiles_on_board();
 
 	display_all();
@@ -1500,6 +1520,7 @@ bool Game::control_enter()
 			players[turn - 1].get_tiles(bag);
 			players[turn - 1] += points;
 			update_points();
+			update_no_tiles_in_bag();
 
 			std::cout << "tiles in bag: " << bag.get_number_of_free_tiles() << std::endl;
 			//service of correct move
