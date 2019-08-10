@@ -52,6 +52,7 @@ Game::Game()
 	set_font();
 	set_texts_start();
 	setSprite();
+	set_buttons();
 	set_text_no_tiles_in_bag();
 
 	window.create(sf::VideoMode(1286 * scale_x, 965 * scale_y), "Scrabble");
@@ -181,6 +182,30 @@ void Game::setSprite()
 	menu_sprite.setScale(board_scale * scale_x, board_scale* scale_y);
 }
 
+void Game::set_buttons()
+{
+	exit.set_borders(780.f * scale_y, 815.f * scale_y, 1095.f * scale_x, 1185.f * scale_x);
+	exit.set_text("Exit");
+
+	options.set_text("Options");
+	options.set_borders(780.f * scale_y, 821.f * scale_y, 935.f * scale_x, 1085.f * scale_x);
+
+	help.set_text("Help");
+	help.set_borders(730.f * scale_y, 775.f * scale_y, 965.f * scale_x, 1055.f * scale_x);
+
+	pass.set_text("Pass");
+	pass.set_borders(730.f * scale_y, 770.f * scale_y, 1095.f * scale_x, 1185.f * scale_x);
+
+	exchange.set_text("Exchange");
+	exchange.set_borders(680.f * scale_y, 720.f * scale_y, 980.f * scale_x, 1150.f * scale_x);
+
+	end_turn.set_text("End turn");
+	end_turn.set_borders(630.f * scale_y, 670.f * scale_y, 905.f * scale_x, 1085.f * scale_x);
+
+	history.set_text("History");
+	history.set_borders(630.f * scale_y, 670.f * scale_y, 1095.f * scale_x, 1245.f * scale_x);
+}
+
 void Game::set_texts_start()
 {
 	welcome_text.setString("Welcome in Scrabble");
@@ -228,7 +253,7 @@ void Game::set_texts_pl_names()
 void Game::set_text_no_tiles_in_bag()
 {
 	tiles_in_bag.setFont(font);
-	tiles_in_bag.setCharacterSize(40);
+	tiles_in_bag.setCharacterSize(40 * scale_x);
 	tiles_in_bag.setPosition((right_border_own_tiles_pix + 240.f)* scale_x, up_border_own_tiles_pix * scale_y);
 	update_no_tiles_in_bag();
 }
@@ -243,6 +268,90 @@ void Game::control()
 		display_all();
 		window.waitEvent(event);
 
+		if (exit.mouse_over(window))
+		{
+			exit.iluminate();
+			display_all();
+			while (exit.mouse_over(window))
+			{
+
+			}
+			exit.reset_iluminate();
+
+			display_all();
+		}
+		else if (options.mouse_over(window))
+		{
+			options.iluminate();
+			display_all();
+			while (options.mouse_over(window))
+			{
+
+			}
+			options.reset_iluminate();
+
+			display_all();
+		}
+		else if (help.mouse_over(window))
+		{
+			help.iluminate();
+			display_all();
+			while (help.mouse_over(window))
+			{
+
+			}
+			help.reset_iluminate();
+
+			display_all();
+		}
+		else if (pass.mouse_over(window))
+		{
+			pass.iluminate();
+			display_all();
+			while (pass.mouse_over(window))
+			{
+
+			}
+			pass.reset_iluminate();
+
+			display_all();
+		}
+		else if (exchange.mouse_over(window))
+		{
+			exchange.iluminate();
+			display_all();
+			while (exchange.mouse_over(window))
+			{
+
+			}
+			exchange.reset_iluminate();
+
+			display_all();
+		}
+		else if (end_turn.mouse_over(window))
+		{
+			end_turn.iluminate();
+			display_all();
+			while (end_turn.mouse_over(window))
+			{
+
+			}
+			end_turn.reset_iluminate();
+
+			display_all();
+		}
+		else if (history.mouse_over(window))
+		{
+			history.iluminate();
+			display_all();
+			while (history.mouse_over(window))
+			{
+
+			}
+			history.reset_iluminate();
+
+			display_all();
+		}
 		if (event.type == sf::Event::MouseButtonPressed)
 		{
 			mouse_position = sf::Mouse::getPosition(window);
@@ -347,6 +456,17 @@ void Game::display_tiles_in_bag()
 	window.draw(tiles_in_bag);
 }
 
+void Game::display_buttons()
+{
+	exit.display(window);
+	options.display(window);
+	help.display(window);
+	pass.display(window);
+	exchange.display(window);
+	history.display(window);
+	end_turn.display(window);
+}
+
 void Game::display_all()
 {
 	window.clear();
@@ -360,6 +480,7 @@ void Game::display_all()
 		}
 	}  //all tiles on board
 
+	display_buttons();
 	display_players();
 	display_tiles_in_bag();
 
@@ -1380,6 +1501,11 @@ void Game::control_own_tiles(sf::Vector2i & mouse_position)
 					players[turn - 1].get_tile(index2)->set_last_used(false);
 					players[turn - 1].get_tile(index2)->reset_outline();
 				} //from own tiles to own tiles
+				else
+				{
+					players[turn - 1].get_tile(index)->reset_outline();
+					players[turn - 1].get_tile(index)->set_last_used(false);
+				}
 			}
 			else
 			{

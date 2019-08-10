@@ -1,6 +1,7 @@
 //TO_DO
 //- Stawianie literek z w³asnych na w³asne
 //
+//- Polska wersja i wybór w polskim menu
 //- Po najechaniu na blanku niech wyœwietla informacjê jak¹ literê zastêpuje
 //- Brak oddania tury
 //- Brak przycisków do wybrania opcji
@@ -26,6 +27,7 @@
 #include "Triple_Word_Score.h"
 #include "Double_Letter_Score.h"
 #include "Double_Word_Score.h"
+#include "Button.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <vector>
@@ -36,6 +38,7 @@
 #include <algorithm>
 #include <typeinfo>
 #include<Windows.h>
+#include<locale.h>
 #pragma warning(disable:4996)
 
 class Game {
@@ -46,8 +49,9 @@ class Game {
 	Bag bag;
 	Dictionary dictionary;
 	float scale_x = 1, scale_y = 1;
+	Button end_turn, history, exchange, help, pass, options, exit;
 
-
+	
 	//SFML variables
 	sf::Texture texture, menu_texture;
 	sf::Sprite board_sprite, menu_sprite;
@@ -77,12 +81,14 @@ class Game {
 	void update_no_tiles_in_bag();
 	void set_font();
 	void setSprite();
+	void set_buttons();
 	void set_texts_start();
 	void set_texts_pl_names(int number);
 	void set_texts_pl_names();
 	void set_text_no_tiles_in_bag();
 	void display_start();
 	void display_tiles_in_bag();
+	void display_buttons();
 	void display_all();
 	//setting and displaying game
 	
