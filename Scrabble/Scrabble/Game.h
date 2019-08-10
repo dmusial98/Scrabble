@@ -1,5 +1,5 @@
 //TO_DO
-//-Stawianie literek z w³asnych na w³asne
+//- Stawianie literek z w³asnych na w³asne
 //
 //- Po najechaniu na blanku niech wyœwietla informacjê jak¹ literê zastêpuje
 //- Brak oddania tury
@@ -11,10 +11,8 @@
 //- Error gdy przy wyborze p³ytek do wymiany kliknie siê na wolne pole : (((
 //
 //	Dla multiplayer :
-//-£¹cznoœæ(opanowaæ za pomoc¹ SFML mam nadziejê)
+//- £¹cznoœæ(opanowaæ za pomoc¹ SFML mam nadziejê)
 //- Wyœwietlenie swoich p³ytek zawsze
-//
-//
 
 #ifndef GAME_H
 #define GAME_H

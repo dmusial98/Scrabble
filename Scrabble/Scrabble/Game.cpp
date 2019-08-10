@@ -1363,6 +1363,24 @@ void Game::control_own_tiles(sf::Vector2i & mouse_position)
 				if (index_2d.x < no_of_field) //when not out of board
 					players[turn - 1].set_tile(index, nullptr);
 			}
+			else if 
+			(mouse_position.x > left_border_own_tiles_pix * scale_x 
+			&& mouse_position.x < right_border_own_tiles_pix  * scale_x
+			&& mouse_position.y > up_border_own_tiles_pix * scale_y
+			&& mouse_position.y < down_border_own_tiles_pix * scale_y
+			)
+			{
+				int index2 = get_number_own_tile(false);
+				Tile * temp_tile = players[turn - 1].get_tile(index);
+
+				if (players[turn - 1].get_tile(index2) == nullptr)
+				{
+					players[turn - 1].set_tile(index, nullptr);
+					players[turn - 1].set_tile(index2, temp_tile);
+					players[turn - 1].get_tile(index2)->set_last_used(false);
+					players[turn - 1].get_tile(index2)->reset_outline();
+				} //from own tiles to own tiles
+			}
 			else
 			{
 				players[turn - 1].get_tile(index)->reset_outline();
