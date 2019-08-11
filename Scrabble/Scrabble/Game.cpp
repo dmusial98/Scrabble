@@ -55,7 +55,7 @@ Game::Game()
 	set_buttons();
 	set_text_no_tiles_in_bag();
 
-	window.create(sf::VideoMode(1286 * scale_x, 965 * scale_y), "Scrabble");
+	window.create(sf::VideoMode(static_cast<unsigned int>(1286 * scale_x), static_cast<unsigned int>(965 * scale_y)), "Scrabble");
 
 	std::vector<std::string> players_strings;
 
@@ -111,36 +111,36 @@ void Game::display_players()
 
 void Game::set_players_pos(std::vector<std::string>& vec)
 {
-	int max_length = vec[0].length();
+	int max_length = static_cast<int>(vec[0].length());
 	for (int i = 0; i < vec.size(); i++)
 	{
 		if (vec[i].length() > max_length)
-			max_length = vec[i].length();
+			max_length = static_cast<int>(vec[i].length());
 	}
 
-	float x = 60. * scale_x, y = 60. * scale_y;
+	float x = 60.f * scale_x, y = 60.f * scale_y;
 
 	if (max_length <= 3)
 	{
-		x = 990. * scale_x;
+		x = 990.f * scale_x;
 	}
 	else if(max_length < 5)
 	{
-		x = 950. * scale_x;
+		x = 950.f * scale_x;
 	}
 	else if (max_length < 8)
 	{
-		x = 920. * scale_x;
+		x = 920.f * scale_x;
 	}
 	else 
 	{
-		x = 890. * scale_x;
+		x = 890.f * scale_x;
 	}
 	
 	for (int i = 0; i < players_texts.size(); i++)
 	{
 		players_texts[i].setPosition(x, y);
-		players_texts[i].setCharacterSize(players_texts[i].getCharacterSize() * scale_x);
+		players_texts[i].setCharacterSize(static_cast<unsigned int>(players_texts[i].getCharacterSize() * scale_x));
 		y += 50.f * scale_y;
 	}
 }
@@ -186,24 +186,31 @@ void Game::set_buttons()
 {
 	exit.set_borders(780.f * scale_y, 815.f * scale_y, 1095.f * scale_x, 1185.f * scale_x);
 	exit.set_text("Exit");
+	exit.set_scale(scale_x, scale_y);
 
 	options.set_text("Options");
 	options.set_borders(780.f * scale_y, 821.f * scale_y, 935.f * scale_x, 1085.f * scale_x);
+	options.set_scale(scale_x, scale_y);
 
 	help.set_text("Help");
 	help.set_borders(730.f * scale_y, 775.f * scale_y, 965.f * scale_x, 1055.f * scale_x);
+	help.set_scale(scale_x, scale_y);
 
 	pass.set_text("Pass");
 	pass.set_borders(730.f * scale_y, 770.f * scale_y, 1095.f * scale_x, 1185.f * scale_x);
+	pass.set_scale(scale_x, scale_y);
 
 	exchange.set_text("Exchange");
 	exchange.set_borders(680.f * scale_y, 720.f * scale_y, 980.f * scale_x, 1150.f * scale_x);
+	exchange.set_scale(scale_x, scale_y);
 
 	end_turn.set_text("End turn");
 	end_turn.set_borders(630.f * scale_y, 670.f * scale_y, 905.f * scale_x, 1085.f * scale_x);
+	end_turn.set_scale(scale_x, scale_y);
 
 	history.set_text("History");
 	history.set_borders(630.f * scale_y, 670.f * scale_y, 1095.f * scale_x, 1245.f * scale_x);
+	history.set_scale(scale_x, scale_y);
 }
 
 void Game::set_texts_start()
@@ -215,9 +222,9 @@ void Game::set_texts_start()
 	info_text.setFont(font);
 	in_text.setFont(font);
 	
-	welcome_text.setCharacterSize(50 * scale_x);
-	info_text.setCharacterSize(30 * scale_x);
-	in_text.setCharacterSize(28 * scale_x);
+	welcome_text.setCharacterSize(static_cast<unsigned int>(50 * scale_x));
+	info_text.setCharacterSize(static_cast<unsigned int>(30 * scale_x));
+	in_text.setCharacterSize(static_cast<unsigned int>(28 * scale_x));
 
 	welcome_text.setPosition(360.f * scale_x, 380.f * scale_y);
 	info_text.setPosition(385.f * scale_x, 480.f * scale_y);
@@ -244,16 +251,16 @@ void Game::set_texts_pl_names()
 	in_text.setString("");
 	welcome_text.setString("");
 	info_text.setPosition(250.f * scale_x, 400.f * scale_y);
-	info_text.setCharacterSize(45 * scale_x);
+	info_text.setCharacterSize(static_cast<unsigned int>(45 * scale_x));
 
 	in_text.setPosition(580.f * scale_x, 520.f * scale_y);
-	in_text.setCharacterSize(35 * scale_x);
+	in_text.setCharacterSize(static_cast<unsigned int>(35 * scale_x));
 }
 
 void Game::set_text_no_tiles_in_bag()
 {
 	tiles_in_bag.setFont(font);
-	tiles_in_bag.setCharacterSize(40 * scale_x);
+	tiles_in_bag.setCharacterSize(static_cast<unsigned int>(40 * scale_x));
 	tiles_in_bag.setPosition((right_border_own_tiles_pix + 240.f)* scale_x, up_border_own_tiles_pix * scale_y);
 	update_no_tiles_in_bag();
 }
@@ -270,87 +277,34 @@ void Game::control()
 
 		if (exit.mouse_over(window))
 		{
-			exit.iluminate();
-			display_all();
-			while (exit.mouse_over(window))
-			{
-
-			}
-			exit.reset_iluminate();
-
-			display_all();
+			button_service(exit, (Game::fun_ptr)(&Game::close_window));
 		}
 		else if (options.mouse_over(window))
 		{
-			options.iluminate();
-			display_all();
-			while (options.mouse_over(window))
-			{
-
-			}
-			options.reset_iluminate();
-
-			display_all();
+			//wywolanie okna z zapisem gry, zatrzymniem czasu itd.
 		}
 		else if (help.mouse_over(window))
 		{
-			help.iluminate();
-			display_all();
-			while (help.mouse_over(window))
-			{
-
-			}
-			help.reset_iluminate();
-
-			display_all();
+			//wyswietlenie okna z pomoca - zasady, sterowanie itd.
 		}
 		else if (pass.mouse_over(window))
 		{
-			pass.iluminate();
-			display_all();
-			while (pass.mouse_over(window))
-			{
-
-			}
-			pass.reset_iluminate();
-
-			display_all();
+			button_service(pass, (Game::fun_ptr)(&Game::pass_function));
+			continue;
 		}
 		else if (exchange.mouse_over(window))
 		{
-			exchange.iluminate();
-			display_all();
-			while (exchange.mouse_over(window))
-			{
-
-			}
-			exchange.reset_iluminate();
-
-			display_all();
+			button_service(exchange, (Game::fun_ptr)(&Game::exchange_tiles_main));
+			continue;
 		}
 		else if (end_turn.mouse_over(window))
 		{
-			end_turn.iluminate();
-			display_all();
-			while (end_turn.mouse_over(window))
-			{
-
-			}
-			end_turn.reset_iluminate();
-
-			display_all();
+			button_service(end_turn, (Game::fun_ptr)(&Game::enter_key_service));
+			continue;
 		}
 		else if (history.mouse_over(window))
 		{
-			history.iluminate();
-			display_all();
-			while (history.mouse_over(window))
-			{
-
-			}
-			history.reset_iluminate();
-
-			display_all();
+			//wyswietlenie okna z historia ulozonych slow :)
 		}
 		if (event.type == sf::Event::MouseButtonPressed)
 		{
@@ -358,37 +312,24 @@ void Game::control()
 
 			if (event.mouseButton.button == sf::Mouse::Button::Left)
 			{
-				if
-					(
-						mouse_position.x > left_border_own_tiles_pix * scale_x
-						&&	mouse_position.x < right_border_own_tiles_pix * scale_x
-						&&	mouse_position.y > up_border_own_tiles_pix * scale_y
-						&&	mouse_position.y < down_border_own_tiles_pix * scale_y
-						)  //get tile from own tiles of player
-
+				if (in_area(mouse_position, left_border_own_tiles_pix, right_border_own_tiles_pix,
+					up_border_own_tiles_pix, down_border_own_tiles_pix))  
+					//get tile from own tiles of player
 				{
 					control_own_tiles(mouse_position);
 				}
-
 				else if
-					(
-						mouse_position.x > left_border_pix * scale_x
-						&&	mouse_position.x < right_border_pix * scale_x
-						&&	mouse_position.y > up_border_pix * scale_y
-						&&	mouse_position.y < down_border_pix * scale_y
-						)  //shift tile from field on different field or own tiles
+					(in_area(mouse_position, left_border_pix, right_border_pix,
+						up_border_pix, down_border_pix))  
+					//shift tile from field on different field or own tiles
 				{
 					control_board_left(mouse_position);
 				}
 			}
 			else if (event.mouseButton.button == sf::Mouse::Button::Right)
 			{
-				if (
-					mouse_position.x > left_border_pix * scale_x
-					&&	mouse_position.x < right_border_pix * scale_x
-					&&	mouse_position.y > up_border_pix * scale_y
-					&&	mouse_position.y < down_border_pix * scale_y
-					)  
+				if (in_area(mouse_position, left_border_pix, right_border_pix,
+					up_border_pix, down_border_pix))
 				{
 					control_board_right(mouse_position);
 				}
@@ -400,32 +341,17 @@ void Game::control()
 				window.close();
 			else if (event.key.code == sf::Keyboard::Enter)
 			{
-				try 
-				{
-					if (!control_enter())
-						continue;
-				}
-				catch (EX_end_game)
-				{
-					end_game();
-					//service of end game
-
+				if (enter_key_service())
 					continue;
-				}
 			}
 			else if (event.key.code == sf::Keyboard::E)
 			{
-				try 
-				{
-					exchange_tiles();
-				}
-				catch (Bag::EX_empty_bag)
-				{
-					create_inf_window("Empty bag", "You can't exchange\ntiles, because \nthe bag is empty.", false);
-					reset_outline_own_tiles();
+				if (exchange_tiles_main())
 					continue;
-				}
-
+			}
+			else if (event.key.code == sf::Keyboard::P)
+			{
+				pass_function();
 			}
 		}
 		else if (event.type == sf::Event::Closed)
@@ -487,6 +413,97 @@ void Game::display_all()
 	players[turn - 1].display_own_tiles(window);
 
 	window.display();
+}
+
+void Game::button_service(Button & button, fun_ptr fun)
+{
+	button.iluminate();
+	display_all();
+	while (button.mouse_over(window))
+	{
+		window.waitEvent(event);
+		if (event.type == sf::Event::MouseButtonPressed)
+		{
+			if (event.mouseButton.button == sf::Mouse::Button::Left)
+			{
+				button.reset_iluminate();
+				if ((this->*fun)())
+				{
+					button.reset_iluminate();
+					display_all();
+				}
+				else 
+					return;
+			}
+		}
+	}
+	button.reset_iluminate();
+	display_all();
+}
+
+bool Game::in_area(sf::Vector2i vec, float left, float right, float up, float down)
+{
+	if (
+		vec.x > left * scale_x
+		&& vec.x < right * scale_x
+		&&	vec.y > up * scale_y
+		&&	vec.y < down * scale_y
+		)
+		return true;
+	else
+		return false;
+}
+
+bool Game::exchange_tiles_main()
+{
+	try
+	{
+		exchange_tiles();
+	}
+	catch (Bag::EX_empty_bag)
+	{
+		create_inf_window("Empty bag", "You can't exchange\ntiles, because \nthe bag is empty.", false);
+		reset_outline_own_tiles();
+		return true;
+	}
+	return false;
+}
+
+bool Game::close_window()
+{
+	window.close();
+	return false;
+}
+
+bool Game::enter_key_service()
+{
+	try
+	{
+		if (!control_enter())
+			return true;
+	}
+	catch (EX_end_game)
+	{
+		end_game();
+		//service of end game
+
+		return true;
+	}
+	return false;
+}
+
+bool Game::pass_function()
+{
+	if (check_tiles_on_board())
+	{
+		create_inf_window("Tiles on board!", "You can't pass turn,\nbecause some are\non board.", false);
+		return true;
+	}
+	else
+	{
+		change_turn();
+		return false;
+	}
 }
 
 void Game::exchange_tiles()
@@ -953,19 +970,17 @@ void Game::end_game()
 void Game::check_words(int &points, std::vector<std::string> &incorrect_words)
 {
 	std::vector<std::string> words;
-	Orientation orientation = exception;
-	Direction direction;
+	Orientation orientation = _exception;
 	Field array[no_of_tiles_for_player];
 	int index = 0;
 
 	get_new_tiles(array, index);
-
+	
 	bool common_row = true, common_column = true;
 
 	if (index == 0)
 	{
-		EX_lack_of_tiles_on_board exception;
-		throw exception;
+		throw EX_lack_of_tiles_on_board{};
 	}
 	else
 	{
@@ -997,8 +1012,7 @@ void Game::check_words(int &points, std::vector<std::string> &incorrect_words)
 			get_main_word_upright(array, words, points);
 	else
 	{
-		EX_not_common_line exception;
-		throw exception;
+		throw EX_not_common_line{};
 	}
 	check_first_move();
 	
@@ -1220,7 +1234,7 @@ void Game::create_inf_window(std::vector<std::string> &inc_words)
 
 void Game::set_inf_window(std::string name)
 {
-	info_window.create(sf::VideoMode( 400 * scale_x, 250 * scale_y ), name);
+	info_window.create(sf::VideoMode(static_cast<unsigned int>(400 * scale_x), static_cast<unsigned int>(250 * scale_y) ), name);
 	menu_sprite.setPosition(-30.f, -30.f);
 	info_window.draw(menu_sprite);
 }
@@ -1696,7 +1710,7 @@ char Game::create_inf_window(std::string title, std::string comment, bool wait_l
 	sf::Text text;
 	text.setString(comment);
 	text.setFont(font);
-	text.setCharacterSize(text.getCharacterSize() * scale_x);
+	text.setCharacterSize(static_cast<unsigned int>(text.getCharacterSize() * scale_x));
 	text.setPosition(50 * scale_x, 30 * scale_y);
 	info_window.draw(menu_sprite);
 	info_window.draw(text);
@@ -1716,8 +1730,8 @@ void Game::display_inc_words(std::vector<std::string> &words)
 	text2.setFont(font);
 	text1.setString("Incorrect words:");
 	text1.setPosition(72 * scale_x, 30 * scale_y);
-	text1.setCharacterSize(text1.getCharacterSize() * scale_x);
-	text2.setCharacterSize(text2.getCharacterSize() * scale_x);
+	text1.setCharacterSize(static_cast<unsigned int>(text1.getCharacterSize() * scale_x));
+	text2.setCharacterSize(static_cast<unsigned int>(text2.getCharacterSize() * scale_x));
 
 
 	std::string str;

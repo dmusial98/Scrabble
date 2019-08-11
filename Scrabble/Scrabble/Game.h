@@ -61,8 +61,8 @@ class Game {
 	sf::Text welcome_text, info_text, in_text, tiles_in_bag;
 	sf::Event event;
 	
-	enum Orientation { upright = 0, horizontally, none, exception };
-	enum Direction { left = 0, right, up, down };
+	typedef bool (Game::*fun_ptr) ();
+	enum Orientation { upright = 0, horizontally, none, _exception };
 
 	struct EX_not_common_line {};
 	struct EX_bad_start {};
@@ -75,18 +75,22 @@ class Game {
 	//exceptions
 
 	void count_scale();
-	void display_players();
+
 	void set_players_pos(std::vector<std::string> &vec);
 	void update_points();
 	void update_no_tiles_in_bag();
+
 	void set_font();
 	void setSprite();
 	void set_buttons();
+
 	void set_texts_start();
 	void set_texts_pl_names(int number);
 	void set_texts_pl_names();
 	void set_text_no_tiles_in_bag();
+
 	void display_start();
+	void display_players();
 	void display_tiles_in_bag();
 	void display_buttons();
 	void display_all();
@@ -98,6 +102,9 @@ class Game {
 	int get_number_own_tile(bool from);
 	//for putting tiles on board
 	
+	void button_service(Button & button, fun_ptr fun);
+	bool in_area(sf::Vector2i vec, float left, float right, float up, float down);
+
 	void exchange_tiles();
 	void change_turn();
 	void check_first_move();
@@ -147,6 +154,12 @@ class Game {
 	void control_board_right(sf::Vector2i & mouse_position);
 	bool control_enter();
 	//controlling through mouse and keyboard 
+
+	bool exchange_tiles_main();
+	bool close_window();
+	bool enter_key_service();
+	bool pass_function();
+
 
 public:
 	Game();
