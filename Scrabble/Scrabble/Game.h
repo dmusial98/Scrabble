@@ -3,9 +3,6 @@
 //
 //- Polska wersja i wybór w polskim menu
 //- Po najechaniu na blanku niech wyœwietla informacjê jak¹ literê zastêpuje
-//- Brak oddania tury
-//- Brak przycisków do wybrania opcji
-//- Brak opcji w³¹czenia historii s³ów
 //- Wybrane sprawdzenie :
 //
 //- wymiana tylu p³ytek ile zosta³o w worku(byle nie wiêcej!)
@@ -46,6 +43,7 @@ class Game {
 	Field * board[no_of_field][no_of_field];
 	std::vector<Player> players;
 	int turn = 1;
+	int number = 1;
 	Bag bag;
 	Dictionary dictionary;
 	float scale_x = 1, scale_y = 1;
@@ -123,7 +121,7 @@ class Game {
 	void end_game();
 	//game logic
 
-	void check_words(int &points, std::vector<std::string> &incorrect_words);
+	void check_words(int &points, std::vector<std::string> &incorrect_words, std::vector<std::string> &correct_words);
 	void get_main_word_horizontally(Field *array, std::vector<std::string> &words, int &points);
 	void get_main_word_upright(Field array[], std::vector<std::string> &words, int &points);
 	void get_word_from_one_tile(Field field, Orientation orient, std::vector<std::string> &words, int &points);
@@ -131,7 +129,7 @@ class Game {
 	//tools for searching words from board 
 
 	void create_inf_window(std::vector<std::string> &inc_words);
-	char create_inf_window(std::string title, std::string comment, bool wait_letter);
+	char create_inf_window(std::string title, std::wstring comment, bool wait_letter);
 	void display_inc_words(std::vector<std::string> &words);
 	void set_inf_window(std::string name);
 	void wait_close_event();

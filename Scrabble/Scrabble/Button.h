@@ -12,8 +12,6 @@ class Button
 	float up_border, down_border, left_border, right_border;
 	sf::Text text;
 	sf::Font font;
-	
-	float scale_x = 1.f, scale_y = 1.f;
 
 public:
 	Button();

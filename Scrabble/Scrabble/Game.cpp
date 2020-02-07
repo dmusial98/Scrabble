@@ -215,7 +215,7 @@ void Game::set_buttons()
 
 void Game::set_texts_start()
 {
-	welcome_text.setString("Welcome in Scrabble");
+	welcome_text.setString("Welcome in Scrabble");	
 	info_text.setString("Please type number of players:");
 	
 	welcome_text.setFont(font);
@@ -462,7 +462,7 @@ bool Game::exchange_tiles_main()
 	}
 	catch (Bag::EX_empty_bag)
 	{
-		create_inf_window("Empty bag", "You can't exchange\ntiles, because \nthe bag is empty.", false);
+		create_inf_window("Empty bag", L"You can't exchange\ntiles, because \nthe bag is empty.", false);
 		reset_outline_own_tiles();
 		return true;
 	}
@@ -496,11 +496,12 @@ bool Game::pass_function()
 {
 	if (check_tiles_on_board())
 	{
-		create_inf_window("Tiles on board!", "You can't pass turn,\nbecause some are\non board.", false);
+		create_inf_window("Tiles on board!", L"You can't pass turn,\nbecause some are\non board.", false);
 		return true;
 	}
 	else
 	{
+		std::cout << number++ << ". Player " << players[turn - 1].get_name() << " passed turn.\n";
 		change_turn();
 		return false;
 	}
@@ -510,12 +511,12 @@ void Game::exchange_tiles()
 {
 	if (check_tiles_on_board())
 	{
-		create_inf_window("Error with tiles!", "You can't exchange\ntiles, because some\nare on board.", false);
+		create_inf_window("Error with tiles!", L"You can't exchange\ntiles, because some\nare on board.", false);
 		reset_outline_own_tiles();
 	}
 	else
 	{
-		create_inf_window("Exchange", "Please select tiles\nfor exchange, \nthen press Enter.", false);
+		create_inf_window("Exchange", L"Please select tiles\nfor exchange, \nthen press Enter.", false);
 
 		sf::Event event;
 		window.waitEvent(event);
@@ -561,11 +562,12 @@ void Game::exchange_tiles()
 			if (!check_tiles_on_board())
 			{
 				players[turn - 1].exchange_tiles(bag);
+				std::cout << number++ << ". Player " << players[turn - 1].get_name() << " exchanged own tiles.\n";
 				change_turn();
 			}
 		}
 		else
-			create_inf_window("No tiles for exchange!", "You haven't choosed\ntiles for exchange.", false);
+			create_inf_window("No tiles for exchange!", L"You haven't choosed\ntiles for exchange.", false);
 
 		display_all();
 
@@ -964,10 +966,10 @@ void Game::end_game()
 	std::string str = "Congratulations,\n";
 	str += players[any_player_without_tiles()].get_name();
 	str += "\nwon.";
-	create_inf_window("End game", str, false);
+	//create_inf_window("End game", str, false);
 }
 
-void Game::check_words(int &points, std::vector<std::string> &incorrect_words)
+void Game::check_words(int &points, std::vector<std::string> &incorrect_words, std::vector<std::string> &correct_words)
 {
 	std::vector<std::string> words;
 	Orientation orientation = _exception;
@@ -1025,6 +1027,10 @@ void Game::check_words(int &points, std::vector<std::string> &incorrect_words)
 		if (!dictionary.correct_word(words[i])) 
 		{
 			incorrect_words.push_back(words[i]);
+		}
+		else
+		{
+			correct_words.push_back(words[i]);
 		}
 	}
 	//checking in dictionary
@@ -1211,7 +1217,7 @@ void Game::blank(bool reset)
 				{
 					if (!reset)
 					{
-						char letter = create_inf_window("Blank", "Please type letter,\nwhich will replace\nblank.", true);
+						char letter = create_inf_window("Blank", L"Please type letter,\nwhich will replace\nblank.", true);
 						//getting letter for blank
 
 						board[i][j]->get_tile()->set_letter(letter);
@@ -1343,7 +1349,7 @@ int Game::player_no_input()
 						}
 						else 
 						{
-							create_inf_window("Incorrect data", "You can choose only\n1, 2, 3 or 4 players.", false);
+							create_inf_window("Incorrect data", L"You can choose only\n1, 2, 3 or 4 players.", false);
 							menu_sprite.setPosition(0.f, 0.f);
 						}
 					}
@@ -1428,7 +1434,7 @@ std::vector<std::string> Game::get_players_names(int no)
 					}
 					else 
 					{
-						create_inf_window("Incorrect data", "Name of player\nshould have from\n1 to 10 characters", false);
+						create_inf_window("Incorrect data", L"Name of player\nshould have from\n1 to 10 characters", false);
 						menu_sprite.setPosition(0.f, 0.f);
 					}
 				}
@@ -1622,47 +1628,49 @@ bool Game::control_enter()
 {
 	{
 		int points = 0;
-		std::vector<std::string> incorrect_words;
+		std::vector<std::string> incorrect_words, correct_words;
 
 		blank(false);
 
 		try
 		{
-			check_words(points, incorrect_words);
+			check_words(points, incorrect_words, correct_words);
 		}
 		catch (EX_lack_of_tiles_on_board)
 		{
-			create_inf_window("No tiles on board!", "You haven't added\nnew tiles during\nyour turn!", false);
+			create_inf_window("No tiles on board!", L"You haven't added\nnew tiles during\nyour turn!", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_empty_space_between_tiles)
 		{
-			create_inf_window("Empty space betwwen tiles!", "Tiles, which you \nhave put have empty \nspace between them.", false);
+			create_inf_window("Empty space betwwen tiles!", L"Tiles, which you \nhave put have empty \nspace between them.", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_not_common_line)
 		{
-			create_inf_window("Lack of common row or column!", "Lack of common\nrow or column!", false);
+			create_inf_window("Lack of common row or column!", L"Lack of common\nrow or column!", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_bad_start)
 		{
-			create_inf_window("Bad start!", "In first move\none of tiles\nhave to lay\non middle field!", false);
+			create_inf_window("Bad start!", L"In first move\none of tiles\nhave to lay\non middle field!", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_bad_start_with_one_tile)
 		{
-			create_inf_window("Incorrect word!", "You mustn't put \nonly one tile \nin first move.", false);
+			const char* str = "Za¿ó³æ gêœl¹ jaŸñ";
+			std::wstring wstr = L"Za¿ó³æ gêœl¹ jaŸñ";
+			create_inf_window("Incorrect word!", L"You mustn't put\nonly one tile\nat the begining\nof game.", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_lack_of_crossword)
 		{
-			create_inf_window("Lack of crossword!", "Your tiles don't\nforms a crossword!", false);
+			create_inf_window("Lack of crossword!", L"Your tiles don't\nforms a crossword!", false);
 			blank(true);
 			return false;
 		}
@@ -1679,8 +1687,20 @@ bool Game::control_enter()
 			players[turn - 1] += points;
 			update_points();
 			update_no_tiles_in_bag();
-
-			std::cout << "tiles in bag: " << bag.get_number_of_free_tiles() << std::endl;
+			std::cout << number << ". Player " << players[turn - 1].get_name() << " played with words: ";
+			for (int i = 0; i < correct_words.size(); i++)
+			{
+				std::cout << correct_words[i];
+			
+				if (i != correct_words.size() - 1)
+				{
+					std::cout << ", ";
+				}
+				else
+				{
+					std::cout << ".\n";
+				}
+			}
 			//service of correct move
 
 			if (bag.get_number_of_free_tiles() == -1 && any_player_without_tiles() != -1)
@@ -1689,6 +1709,7 @@ bool Game::control_enter()
 			}
 			else
 			{
+				number++;
 				change_turn();
 			}
 		}
@@ -1704,7 +1725,7 @@ bool Game::control_enter()
 	return true;
 }
 
-char Game::create_inf_window(std::string title, std::string comment, bool wait_letter)
+char Game::create_inf_window(std::string title, std::wstring comment, bool wait_letter)
 {
 	set_inf_window(title);
 	sf::Text text;

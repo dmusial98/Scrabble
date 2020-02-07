@@ -3,13 +3,18 @@
 
 #include <SFML\Graphics.hpp>
 #include "Constexpr.h"
-#include<iostream>
+#include <iostream>
 #include <string>
-#include<Windows.h>
+#include <Windows.h>
 
 class Tile {
+public:
+	enum Language_ver { Polish, English };
+
+private:
 	char letter;
 	int value;
+	Language_ver language;
 	bool used = false;  //if is in own tiles
 	bool last_used = false;  //if is on the board
 	bool tick = false;
@@ -19,7 +24,9 @@ class Tile {
 	sf::RectangleShape sprite;
 
 public:
-	Tile(char let, int val);
+	
+
+	Tile(char let, int val, Language_ver lang);
 	Tile() = default;
 	~Tile() = default;
 
@@ -33,6 +40,7 @@ public:
 	char get_letter();
 	void set_letter(char let);
 	int get_value();
+	Language_ver get_language();
 
 	sf::Vector2f get_sprite_position();
 	void set_sprite_position(sf::Vector2f pos);

@@ -1,9 +1,14 @@
 #include "Tile.h"
 
-Tile::Tile(char let, int val) : value(val), letter(let), used(false), last_used(false)
+Tile::Tile(char let, int val, Language_ver lang) : value(val), letter(let), used(false), last_used(false)
 {
 	float scale_x = GetSystemMetrics(16) / 1920.f;
 	float scale_y = GetSystemMetrics(17) / 1057.f;
+
+	if (lang == 1)
+		language = English;
+	else
+		language = Polish;
 
 	set_sprite(scale_x, scale_y);
 }
@@ -53,6 +58,11 @@ int Tile::get_value()
 	return value;
 }
 
+Tile::Language_ver Tile::get_language()
+{
+	return language;
+}
+
 sf::Vector2f Tile::get_sprite_position()
 {
 	return sprite.getPosition();
@@ -75,9 +85,15 @@ void Tile::reset_outline()
 }
 
 void Tile::set_sprite(float scale_x, float scale_y)
+// 0 - Polish tile, 1 - English tile
 {
-	std::string file_name{ "Textures/Tiles/English/"};
-	file_name += static_cast<char>(letter - 32);
+	std::string file_name;
+	if (language == English)
+		file_name = "Textures/Tiles/English/";
+	else 
+		file_name = "Textures/Tiles/Polskie/";
+
+	file_name += static_cast<char>(letter);
 	file_name += ".png";
 
 	if (letter)

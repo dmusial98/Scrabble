@@ -6,7 +6,7 @@ Button::Button()
 		std::cout << "font load error";
 
 	text.setFont(font);
-	text.setCharacterSize(36 * scale_x);
+	text.setCharacterSize(36);
 	
 }
 
@@ -28,8 +28,7 @@ void Button::set_text(std::string str)
 
 void Button::set_scale(float x, float y)
 {
-	scale_x = x;
-	scale_y = y;
+	text.setScale(sf::Vector2f(x, y));
 }
 
 bool Button::mouse_over(sf::RenderWindow &window)
