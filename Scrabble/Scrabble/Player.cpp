@@ -1,6 +1,6 @@
 #include "Player.h"
 
-Player::Player(Bag &bag, std::string n) : name(n)
+Player::Player(Bag &bag, std::wstring n) : name(n)
 {
 	scale_x = GetSystemMetrics(16) / 1920.f;
 	scale_y = GetSystemMetrics(17) / 1057.f;
@@ -43,7 +43,7 @@ void Player::get_tiles(Bag &bag)
 	empty_tiles = false;
 }
 
-void Player::set_name(std::string n)
+void Player::set_name(std::wstring n)
 {
 	name = n;
 }
@@ -110,7 +110,7 @@ bool Player::any_last_used(int no_free_tails_in_bag)
 	return false;
 }
 
-std::string Player::get_name()
+std::wstring Player::get_name()
 {
 	return name;
 }

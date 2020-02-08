@@ -19,7 +19,7 @@ private:
 	Tile::Language_ver lang_ver = Tile::Language_ver::Polish;
 	Tile** tiles = pl_tiles;
 
-public:
+public:		
 	Bag();
 	~Bag();
 	void set_language(Tile::Language_ver lv);

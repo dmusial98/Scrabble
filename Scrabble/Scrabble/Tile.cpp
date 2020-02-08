@@ -1,6 +1,6 @@
 #include "Tile.h"
 
-Tile::Tile(char let, int val, Language_ver lang) : value(val), letter(let), used(false), last_used(false)
+Tile::Tile(wchar_t let, int val, Language_ver lang) : value(val), letter(let), used(false), last_used(false)
 {
 	float scale_x = GetSystemMetrics(16) / 1920.f;
 	float scale_y = GetSystemMetrics(17) / 1057.f;
@@ -43,7 +43,7 @@ void Tile::set_tick(bool s)
 	tick = s;
 }
 
-char Tile::get_letter()
+wchar_t Tile::get_letter()
 {
 	return letter;
 }
@@ -93,20 +93,40 @@ void Tile::set_sprite(float scale_x, float scale_y)
 	else 
 		file_name = "Textures/Tiles/Polskie/";
 
-	file_name += static_cast<char>(letter);
-	file_name += ".png";
 
-	if (letter)
+	if (letter == *L"¹")
+		file_name += "a1";
+	else if (letter == *L"æ")
+		file_name += "c1";
+	else if (letter == *L"ê")
+		file_name += "e1";
+	else if (letter == *L"³")
+		file_name += "l1";
+	else if (letter == *L"ó")
+		file_name += "o1";
+	else if (letter == *L"œ")
+		file_name += "s1";
+	else if (letter == *L"Ÿ")
+		file_name += "z1";
+	else if (letter == *L"¿")
+		file_name += "z2";
+	else
 	{
-		if (!texture.loadFromFile(file_name))
-			std::cout << "tile texture load error" << std::endl;
+		file_name += static_cast<char>(letter);
 	}
-	else 
+
+	if(letter == 0)
 	{
 		if (!texture.loadFromFile("Textures/Tiles/English/Blank.png"))
 			std::cout << "tile texture load error" << std::endl;
 	}
-
+	else
+	{
+		file_name += ".png";
+		if (!texture.loadFromFile(file_name))
+			std::cout << "tile texture load error" << std::endl;
+	}	
+	
 	sprite.setTexture(&texture);
 	sprite.setSize(sf::Vector2f(49.f * scale_x, 49.f * scale_y));
 }

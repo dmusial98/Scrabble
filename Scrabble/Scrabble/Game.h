@@ -36,6 +36,8 @@
 #include <typeinfo>
 #include<Windows.h>
 #include<locale.h>
+#include<cstdlib>
+
 #pragma warning(disable:4996)
 
 class Game {
@@ -74,7 +76,7 @@ class Game {
 
 	void count_scale();
 
-	void set_players_pos(std::vector<std::string> &vec);
+	void set_players_pos(std::vector<std::wstring> &vec);
 	void update_points();
 	void update_no_tiles_in_bag();
 
@@ -121,17 +123,17 @@ class Game {
 	void end_game();
 	//game logic
 
-	void check_words(int &points, std::vector<std::string> &incorrect_words, std::vector<std::string> &correct_words);
-	void get_main_word_horizontally(Field *array, std::vector<std::string> &words, int &points);
-	void get_main_word_upright(Field array[], std::vector<std::string> &words, int &points);
-	void get_word_from_one_tile(Field field, Orientation orient, std::vector<std::string> &words, int &points);
+	void check_words(int &points, std::vector<std::wstring> &incorrect_words, std::vector<std::wstring> &correct_words);
+	void get_main_word_horizontally(Field *array, std::vector<std::wstring> &words, int &points);
+	void get_main_word_upright(Field array[], std::vector<std::wstring> &words, int &points);
+	void get_word_from_one_tile(Field field, Orientation orient, std::vector<std::wstring> &words, int &points);
 	void search_letter(int &value, int border, bool &end, bool increase);
 	//tools for searching words from board 
 
-	void create_inf_window(std::vector<std::string> &inc_words);
-	char create_inf_window(std::string title, std::wstring comment, bool wait_letter);
-	void display_inc_words(std::vector<std::string> &words);
-	void set_inf_window(std::string name);
+	void create_inf_window(std::vector<std::wstring> &inc_words);
+	char create_inf_window(std::wstring title, std::wstring comment, bool wait_letter);
+	void display_inc_words(std::vector<std::wstring> &words);
+	void set_inf_window(std::wstring name);
 	void wait_close_event();
 	char wait_close_event_letter();
 	//tools for creating window with info about errors	
@@ -140,10 +142,10 @@ class Game {
 	void reset_outline_tiles_on_board();
 	//displaying outline of tile
 
-	std::vector<std::string> menu();
+	std::vector<std::wstring> menu();
 	int player_no_input();
 	bool check_players_no_input(int no);
-	std::vector<std::string> get_players_names(int no);
+	std::vector<std::wstring> get_players_names(int no);
 	//service of inputting names of players
 	void wait_time();
 

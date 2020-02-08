@@ -5,8 +5,6 @@ int main() {
 
 	setlocale(LC_ALL, "polish");
 
-	std::cout << "Za¿ó³æ gêœl¹ jaŸñ\n\n";
-
 	Game game;
 	game.control();
 

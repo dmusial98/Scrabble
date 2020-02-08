@@ -6,12 +6,12 @@
 
 class Dictionary {
 
-	std::set<std::string> words;
+	std::set<std::wstring> words;
 
 public:
 	Dictionary();
 	~Dictionary() = default;
-	bool correct_word(std::string word);
+	bool correct_word(std::wstring word);
 
 
 };

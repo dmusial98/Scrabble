@@ -11,7 +11,7 @@ class Player {
 
 	Tile* own_tiles[no_of_tiles_for_player]{ nullptr };
 	int points = 0;
-	std::string name;
+	std::wstring name;
 	bool empty_tiles = true;
 
 	float scale_x = 1;
@@ -20,17 +20,17 @@ class Player {
 public:
 	struct EX_exchange_lack_of_tiles {};
 	
-	Player(Bag &bag, std::string name);
+	Player(Bag &bag, std::wstring name);
 	~Player() = default;
 
 	void exchange_tiles(Bag &bag);
 	void get_tiles(Bag &bag);
 	
-	std::string get_name();
+	std::wstring get_name();
 	int get_points();
 	
 	void set_points(int p);
-	void set_name(std::string n);
+	void set_name(std::wstring n);
 	Tile * get_tile(int index);
 	void set_tile(int index, Tile *t);
 	void set_empty_tiles(bool s);

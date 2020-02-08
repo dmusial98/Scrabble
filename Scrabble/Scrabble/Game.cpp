@@ -1,5 +1,47 @@
 #include "Game.h"
 
+//convert string to wstring
+std::wstring wstring_from_bytes(std::string const& str)
+{
+	size_t requiredSize = 0;
+	std::wstring answer;
+	wchar_t *pWTempString = NULL;
+
+	/*
+	* Call the conversion function without the output buffer to get the required size
+	*  - Add one to leave room for the NULL terminator
+	*/
+	requiredSize = mbstowcs(NULL, str.c_str(), 0) + 1;
+
+	/* Allocate the output string (Add one to leave room for the NULL terminator) */
+	pWTempString = (wchar_t *)malloc(requiredSize * sizeof(wchar_t));
+	if (pWTempString == NULL)
+	{
+		printf("Memory allocation failure.\n");
+	}
+	else
+	{
+		// Call the conversion function with the output buffer
+		size_t size = mbstowcs(pWTempString, str.c_str(), requiredSize);
+		if (size == (size_t)(-1))
+		{
+			printf("Couldn't convert string\n");
+		}
+		else
+		{
+			answer = pWTempString;
+		}
+	}
+
+
+	if (pWTempString != NULL)
+	{
+		delete[] pWTempString;
+	}
+
+	return answer;
+}
+
 Game::Game()
 {
 	for (int i = 0; i < no_of_field; i++) {
@@ -57,7 +99,7 @@ Game::Game()
 
 	window.create(sf::VideoMode(static_cast<unsigned int>(1286 * scale_x), static_cast<unsigned int>(965 * scale_y)), "Scrabble");
 
-	std::vector<std::string> players_strings;
+	std::vector<std::wstring> players_strings;
 
 	try
 	{
@@ -71,7 +113,7 @@ Game::Game()
 	for (int i = 0; i < players_strings.size(); i++)
 	{
 		players.push_back(Player(bag, players_strings[i]));
-		players_texts.push_back(sf::Text(players_strings[i] + "   0", font, 35));
+		players_texts.push_back(sf::Text(players_strings[i] + L"   0", font, 35));
 	}
 	//display points with names of players
 
@@ -109,7 +151,7 @@ void Game::display_players()
 	} //names of players with their points
 }
 
-void Game::set_players_pos(std::vector<std::string>& vec)
+void Game::set_players_pos(std::vector<std::wstring>& vec)
 {
 	int max_length = static_cast<int>(vec[0].length());
 	for (int i = 0; i < vec.size(); i++)
@@ -149,19 +191,29 @@ void Game::update_points()
 {
 	char temp[5];
 
+	
+
 	for (int i = 0; i < players_texts.size(); i++)
 	{
-		players_texts[i].setString(players[i].get_name() + "   " + _itoa(players[i].get_points(), temp, 10) );
+		std::string str = _itoa(players[i].get_points(), temp, 10);
+		std::wstring wstr = wstring_from_bytes(str);
+
+		players_texts[i].setString(players[i].get_name() + L"   " +  wstr);
 	}
 }
+
+//convert string to wstring 
+
 
 void Game::update_no_tiles_in_bag()
 {
 	char temp[5];
 
-	std::string str;
-	str = "Tiles in bag: ";
-	tiles_in_bag.setString(str + (_itoa(bag.get_number_of_free_tiles() + 1, temp, 10)));
+
+	std::string str = (_itoa(bag.get_number_of_free_tiles() + 1, temp, 10));
+	std::wstring result_str;
+	result_str = L"Tiles in bag: " + wstring_from_bytes(str);
+	tiles_in_bag.setString(result_str);
 }
 
 void Game::set_font()
@@ -233,17 +285,17 @@ void Game::set_texts_start()
 
 void Game::set_texts_pl_names(int number)
 {
-	std::string str;
+	std::wstring str;
 	if (number == 0)
-		str = "first";
+		str = L"first";
 	else if (number == 1)
-		str = "second";
+		str = L"second";
 	else if (number == 2)
-		str = "third";
+		str = L"third";
 	else if (number == 3)
-		str = "fourth";
+		str = L"fourth";
 
-	info_text.setString("Please type name of " + str + " player");
+	info_text.setString(L"Please type name of " + str + L" player");
 }
 
 void Game::set_texts_pl_names()
@@ -462,7 +514,7 @@ bool Game::exchange_tiles_main()
 	}
 	catch (Bag::EX_empty_bag)
 	{
-		create_inf_window("Empty bag", L"You can't exchange\ntiles, because \nthe bag is empty.", false);
+		create_inf_window(L"Empty bag", L"You can't exchange\ntiles, because \nthe bag is empty.", false);
 		reset_outline_own_tiles();
 		return true;
 	}
@@ -496,12 +548,12 @@ bool Game::pass_function()
 {
 	if (check_tiles_on_board())
 	{
-		create_inf_window("Tiles on board!", L"You can't pass turn,\nbecause some are\non board.", false);
+		create_inf_window(L"Tiles on board!", L"You can't pass turn,\nbecause some are\non board.", false);
 		return true;
 	}
 	else
 	{
-		std::cout << number++ << ". Player " << players[turn - 1].get_name() << " passed turn.\n";
+		std::wcout << number++ << L". Player " << players[turn - 1].get_name() << L" passed turn.\n";
 		change_turn();
 		return false;
 	}
@@ -511,12 +563,12 @@ void Game::exchange_tiles()
 {
 	if (check_tiles_on_board())
 	{
-		create_inf_window("Error with tiles!", L"You can't exchange\ntiles, because some\nare on board.", false);
+		create_inf_window(L"Error with tiles!", L"You can't exchange\ntiles, because some\nare on board.", false);
 		reset_outline_own_tiles();
 	}
 	else
 	{
-		create_inf_window("Exchange", L"Please select tiles\nfor exchange, \nthen press Enter.", false);
+		create_inf_window(L"Exchange", L"Please select tiles\nfor exchange, \nthen press Enter.", false);
 
 		sf::Event event;
 		window.waitEvent(event);
@@ -562,12 +614,12 @@ void Game::exchange_tiles()
 			if (!check_tiles_on_board())
 			{
 				players[turn - 1].exchange_tiles(bag);
-				std::cout << number++ << ". Player " << players[turn - 1].get_name() << " exchanged own tiles.\n";
+				std::wcout << number++ << L". Player " << players[turn - 1].get_name() << L" exchanged own tiles.\n";
 				change_turn();
 			}
 		}
 		else
-			create_inf_window("No tiles for exchange!", L"You haven't choosed\ntiles for exchange.", false);
+			create_inf_window(L"No tiles for exchange!", L"You haven't choosed\ntiles for exchange.", false);
 
 		display_all();
 
@@ -637,13 +689,13 @@ int Game::get_number_own_tile(bool from)
 		return index;
 }
 
-void Game::get_main_word_horizontally(Field * array, std::vector<std::string> &words, int &points)
+void Game::get_main_word_horizontally(Field * array, std::vector<std::wstring> &words, int &points)
 {
 	int index = 0;
 	int arr_min[no_of_tiles_for_player]{ 100, 100, 100, 100, 100, 100, 100 };
 	int arr_max[no_of_tiles_for_player]{ -1, -1, -1, -1, -1, -1,-1 };
 	int min_ind, max_ind;
-	std::string word;
+	std::wstring word;
 	int temp_points = 0;
 
 	for (int i = 0; i < no_of_tiles_for_player; i++)
@@ -693,13 +745,13 @@ void Game::get_main_word_horizontally(Field * array, std::vector<std::string> &w
 	}
 }
 
-void Game::get_main_word_upright(Field array[], std::vector<std::string> &words, int &points)
+void Game::get_main_word_upright(Field array[], std::vector<std::wstring> &words, int &points)
 {
 	int index = 0;
 	int arr_min[no_of_tiles_for_player]{ 100, 100, 100, 100, 100, 100, 100 };
 	int arr_max[no_of_tiles_for_player]{ -1, -1, -1, -1, -1, -1,-1 };
 	int min_ind, max_ind;
-	std::string word;
+	std::wstring word;
 
 
 	for (int i = 0; i < no_of_tiles_for_player; i++)
@@ -750,9 +802,9 @@ void Game::get_main_word_upright(Field array[], std::vector<std::string> &words,
 	}
 }
 
-void Game::get_word_from_one_tile(Field field, Orientation orient, std::vector<std::string> &words, int &points)
+void Game::get_word_from_one_tile(Field field, Orientation orient, std::vector<std::wstring> &words, int &points)
 {
-	std::string word;
+	std::wstring word;
 	bool end = false, new_word = false;
 
 	if (orient == horizontally)
@@ -963,15 +1015,15 @@ void Game::end_game()
 
 	display_all();
 
-	std::string str = "Congratulations,\n";
+	std::wstring str = L"Congratulations,\n";
 	str += players[any_player_without_tiles()].get_name();
-	str += "\nwon.";
+	str += L"\nwon.";
 	//create_inf_window("End game", str, false);
 }
 
-void Game::check_words(int &points, std::vector<std::string> &incorrect_words, std::vector<std::string> &correct_words)
+void Game::check_words(int &points, std::vector<std::wstring> &incorrect_words, std::vector<std::wstring> &correct_words)
 {
-	std::vector<std::string> words;
+	std::vector<std::wstring> words;
 	Orientation orientation = _exception;
 	Field array[no_of_tiles_for_player];
 	int index = 0;
@@ -1217,7 +1269,7 @@ void Game::blank(bool reset)
 				{
 					if (!reset)
 					{
-						char letter = create_inf_window("Blank", L"Please type letter,\nwhich will replace\nblank.", true);
+						char letter = create_inf_window(L"Blank", L"Please type letter,\nwhich will replace\nblank.", true);
 						//getting letter for blank
 
 						board[i][j]->get_tile()->set_letter(letter);
@@ -1231,14 +1283,14 @@ void Game::blank(bool reset)
 
 }
 
-void Game::create_inf_window(std::vector<std::string> &inc_words)
+void Game::create_inf_window(std::vector<std::wstring> &inc_words)
 {
-	set_inf_window("Incorrect words!");
+	set_inf_window(L"Incorrect words!");
 	display_inc_words(inc_words);
 	wait_close_event();
 }
 
-void Game::set_inf_window(std::string name)
+void Game::set_inf_window(std::wstring name)
 {
 	info_window.create(sf::VideoMode(static_cast<unsigned int>(400 * scale_x), static_cast<unsigned int>(250 * scale_y) ), name);
 	menu_sprite.setPosition(-30.f, -30.f);
@@ -1306,10 +1358,10 @@ void Game::reset_outline_tiles_on_board()
 	}
 }
 
-std::vector<std::string> Game::menu()
+std::vector<std::wstring> Game::menu()
 {
 	display_start();
-	std::vector<std::string> players = get_players_names(player_no_input());
+	std::vector<std::wstring> players = get_players_names(player_no_input());
 	return players;
 }
 
@@ -1349,7 +1401,7 @@ int Game::player_no_input()
 						}
 						else 
 						{
-							create_inf_window("Incorrect data", L"You can choose only\n1, 2, 3 or 4 players.", false);
+							create_inf_window(L"Incorrect data", L"You can choose only\n1, 2, 3 or 4 players.", false);
 							menu_sprite.setPosition(0.f, 0.f);
 						}
 					}
@@ -1385,12 +1437,12 @@ bool Game::check_players_no_input(int no)
 		return false;
 }
 
-std::vector<std::string> Game::get_players_names(int no)
+std::vector<std::wstring> Game::get_players_names(int no)
 {
 	int temp_num = 0;
-	std::vector<std::string> vec;
+	std::vector<std::wstring> vec;
 
-	std::string str;
+	std::wstring str;
 	sf::Event event;
 	
 	set_texts_pl_names();
@@ -1401,10 +1453,7 @@ std::vector<std::string> Game::get_players_names(int no)
 
 		window.waitEvent(event);
 		if (event.type == sf::Event::TextEntered)
-		{
-			// Handle ASCII characters only
-			if (event.text.unicode < 128)
-			{
+		{			
 				if (event.text.unicode != Enter && event.text.unicode != Escape_)
 				{
 					if (event.text.unicode == Backspace) {
@@ -1414,7 +1463,7 @@ std::vector<std::string> Game::get_players_names(int no)
 						}
 					}
 					else {
-						str += static_cast<char>(event.text.unicode);
+						str += static_cast<wchar_t>(event.text.unicode);
 						in_text.setString(str);
 					} //putting new sign into string
 				}
@@ -1423,7 +1472,7 @@ std::vector<std::string> Game::get_players_names(int no)
 					if (str.length() > 0 && str.length() < 11)
 					{
 						vec.push_back(str);
-						str = "";
+						str = L"";
 						temp_num++;
 						
 						if (temp_num == no)
@@ -1434,7 +1483,7 @@ std::vector<std::string> Game::get_players_names(int no)
 					}
 					else 
 					{
-						create_inf_window("Incorrect data", L"Name of player\nshould have from\n1 to 10 characters", false);
+						create_inf_window(L"Incorrect data", L"Name of player\nshould have from\n1 to 10 characters", false);
 						menu_sprite.setPosition(0.f, 0.f);
 					}
 				}
@@ -1451,8 +1500,7 @@ std::vector<std::string> Game::get_players_names(int no)
 					throw EX_exit{};
 				}
 				display_start();
-			}
-		} 
+		}
 		else if (event.type == sf::Event::Closed)
 		{
 			window.close();
@@ -1628,7 +1676,7 @@ bool Game::control_enter()
 {
 	{
 		int points = 0;
-		std::vector<std::string> incorrect_words, correct_words;
+		std::vector<std::wstring> incorrect_words, correct_words;
 
 		blank(false);
 
@@ -1638,39 +1686,37 @@ bool Game::control_enter()
 		}
 		catch (EX_lack_of_tiles_on_board)
 		{
-			create_inf_window("No tiles on board!", L"You haven't added\nnew tiles during\nyour turn!", false);
+			create_inf_window(L"No tiles on board!", L"You haven't added\nnew tiles during\nyour turn!", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_empty_space_between_tiles)
 		{
-			create_inf_window("Empty space betwwen tiles!", L"Tiles, which you \nhave put have empty \nspace between them.", false);
+			create_inf_window(L"Empty space betwwen tiles!", L"Tiles, which you \nhave put have empty \nspace between them.", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_not_common_line)
 		{
-			create_inf_window("Lack of common row or column!", L"Lack of common\nrow or column!", false);
+			create_inf_window(L"Lack of common row or column!", L"Lack of common\nrow or column!", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_bad_start)
 		{
-			create_inf_window("Bad start!", L"In first move\none of tiles\nhave to lay\non middle field!", false);
+			create_inf_window(L"Bad start!", L"In first move\none of tiles\nhave to lay\non middle field!", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_bad_start_with_one_tile)
 		{
-			const char* str = "Za¿ó³æ gêœl¹ jaŸñ";
-			std::wstring wstr = L"Za¿ó³æ gêœl¹ jaŸñ";
-			create_inf_window("Incorrect word!", L"You mustn't put\nonly one tile\nat the begining\nof game.", false);
+			create_inf_window(L"Incorrect word!", L"You mustn't put\nonly one tile\nat the begining\nof game.", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_lack_of_crossword)
 		{
-			create_inf_window("Lack of crossword!", L"Your tiles don't\nforms a crossword!", false);
+			create_inf_window(L"Lack of crossword!", L"Your tiles don't\nforms a crossword!", false);
 			blank(true);
 			return false;
 		}
@@ -1687,10 +1733,10 @@ bool Game::control_enter()
 			players[turn - 1] += points;
 			update_points();
 			update_no_tiles_in_bag();
-			std::cout << number << ". Player " << players[turn - 1].get_name() << " played with words: ";
+			std::wcout << number << L". Player " << players[turn - 1].get_name() << L" played with words: ";
 			for (int i = 0; i < correct_words.size(); i++)
 			{
-				std::cout << correct_words[i];
+				std::wcout << correct_words[i];
 			
 				if (i != correct_words.size() - 1)
 				{
@@ -1725,7 +1771,7 @@ bool Game::control_enter()
 	return true;
 }
 
-char Game::create_inf_window(std::string title, std::wstring comment, bool wait_letter)
+char Game::create_inf_window(std::wstring title, std::wstring comment, bool wait_letter)
 {
 	set_inf_window(title);
 	sf::Text text;
@@ -1744,7 +1790,7 @@ char Game::create_inf_window(std::string title, std::wstring comment, bool wait_
 		return wait_close_event_letter();
 }
 
-void Game::display_inc_words(std::vector<std::string> &words)
+void Game::display_inc_words(std::vector<std::wstring> &words)
 {
 	sf::Text text1, text2;
 	text1.setFont(font);
@@ -1755,11 +1801,11 @@ void Game::display_inc_words(std::vector<std::string> &words)
 	text2.setCharacterSize(static_cast<unsigned int>(text2.getCharacterSize() * scale_x));
 
 
-	std::string str;
+	std::wstring str;
 	for (int i = 0; i < words.size(); i++) 
 	{
 		str += words[i];
-		str += "\n";
+		str += L"\n";
 	}
 
 	text2.setString(str);
