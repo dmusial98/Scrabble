@@ -47,7 +47,7 @@ class Game {
 	int turn = 1;
 	int number = 1;
 	Bag bag;
-	Dictionary dictionary;
+	Dictionary* dictionary = nullptr;
 	float scale_x = 1, scale_y = 1;
 	Button end_turn, history, exchange, help, pass, options, exit;
 
