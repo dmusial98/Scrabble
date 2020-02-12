@@ -38,7 +38,7 @@ public:
 	bool get_tick();
 	void set_tick(bool s);
 	wchar_t get_letter();
-	void set_letter(char let);
+	void set_letter(wchar_t let);
 	int get_value();
 	Language_ver get_language();
 

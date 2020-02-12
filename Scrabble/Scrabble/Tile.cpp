@@ -48,7 +48,7 @@ wchar_t Tile::get_letter()
 	return letter;
 }
 
-void Tile::set_letter(char let)
+void Tile::set_letter(wchar_t let)
 {
 	letter = let;
 }

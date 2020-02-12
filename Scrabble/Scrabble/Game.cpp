@@ -214,7 +214,10 @@ void Game::update_no_tiles_in_bag()
 
 	std::string str = (_itoa(bag.get_number_of_free_tiles() + 1, temp, 10));
 	std::wstring result_str;
-	result_str = L"Tiles in bag: " + wstring_from_bytes(str);
+	if(bag.get_language() == Tile::English)
+		result_str = L"Tiles in bag: " + wstring_from_bytes(str);
+	else 
+		result_str = L"Liter w worku: " + wstring_from_bytes(str);
 	tiles_in_bag.setString(result_str);
 }
 
@@ -269,9 +272,16 @@ void Game::set_buttons()
 
 void Game::set_texts_start()
 {
-	welcome_text.setString("Welcome in Scrabble");	
-	info_text.setString("Please type number of players:");
-	
+	if (bag.get_language() == Tile::English)
+	{
+		welcome_text.setString("Welcome in Scrabble");
+		info_text.setString("Please type number of players:");
+	}
+	else 
+	{
+		welcome_text.setString(L"Witaj w Scrabble");
+		info_text.setString(L"Proszê wpisaæ liczbê graczy:");
+	}
 	welcome_text.setFont(font);
 	info_text.setFont(font);
 	in_text.setFont(font);
@@ -280,31 +290,60 @@ void Game::set_texts_start()
 	info_text.setCharacterSize(static_cast<unsigned int>(30 * scale_x));
 	in_text.setCharacterSize(static_cast<unsigned int>(28 * scale_x));
 
-	welcome_text.setPosition(360.f * scale_x, 380.f * scale_y);
-	info_text.setPosition(385.f * scale_x, 480.f * scale_y);
+	if (bag.get_language() == Tile::English)
+	{
+		welcome_text.setPosition(360.f * scale_x, 380.f * scale_y);
+		info_text.setPosition(385.f * scale_x, 480.f * scale_y);
+	}
+	else
+	{
+		welcome_text.setPosition(420.f * scale_x, 380.f * scale_y);
+		info_text.setPosition(415.f * scale_x, 480.f * scale_y);
+	}
 	in_text.setPosition(635.f * scale_x, 550.f * scale_y);
 }
 
 void Game::set_texts_pl_names(int number)
 {
 	std::wstring str;
-	if (number == 0)
-		str = L"first";
-	else if (number == 1)
-		str = L"second";
-	else if (number == 2)
-		str = L"third";
-	else if (number == 3)
-		str = L"fourth";
 
-	info_text.setString(L"Please type name of " + str + L" player");
+	if (bag.get_language() == Tile::English)
+	{
+		if (number == 0)
+			str = L"first";
+		else if (number == 1)
+			str = L"second";
+		else if (number == 2)
+			str = L"third";
+		else if (number == 3)
+			str = L"fourth";
+
+		info_text.setString(L"Please type name of " + str + L" player");
+	}
+	else
+	{
+		if (number == 0)
+			str = L"pierwszego";
+		else if (number == 1)
+			str = L"drugiego";
+		else if (number == 2)
+			str = L"trzeciego";
+		else if (number == 3)
+			str = L"czwartego";
+
+		info_text.setString(L"Proszê wpisaæ nazwê " + str + L" gracza");
+	}
 }
 
 void Game::set_texts_pl_names()
 {
 	in_text.setString("");
 	welcome_text.setString("");
-	info_text.setPosition(250.f * scale_x, 400.f * scale_y);
+	if(bag.get_language() == Tile::English)
+		info_text.setPosition(250.f * scale_x, 400.f * scale_y);
+	else 
+		info_text.setPosition(193.f * scale_x, 400.f * scale_y);
+
 	info_text.setCharacterSize(static_cast<unsigned int>(45 * scale_x));
 
 	in_text.setPosition(580.f * scale_x, 520.f * scale_y);
@@ -314,8 +353,16 @@ void Game::set_texts_pl_names()
 void Game::set_text_no_tiles_in_bag()
 {
 	tiles_in_bag.setFont(font);
-	tiles_in_bag.setCharacterSize(static_cast<unsigned int>(40 * scale_x));
-	tiles_in_bag.setPosition((right_border_own_tiles_pix + 240.f)* scale_x, up_border_own_tiles_pix * scale_y);
+	if (bag.get_language() == Tile::English)
+	{
+		tiles_in_bag.setCharacterSize(static_cast<unsigned int>(40 * scale_x));
+		tiles_in_bag.setPosition((right_border_own_tiles_pix + 240.f)* scale_x, up_border_own_tiles_pix * scale_y);
+	}
+	else
+	{
+		tiles_in_bag.setCharacterSize(static_cast<unsigned int>(40 * scale_x));
+		tiles_in_bag.setPosition((right_border_own_tiles_pix + 220.f)* scale_x, up_border_own_tiles_pix * scale_y);
+	}
 	update_no_tiles_in_bag();
 }
 
@@ -515,8 +562,11 @@ bool Game::exchange_tiles_main()
 		exchange_tiles();
 	}
 	catch (Bag::EX_empty_bag)
-	{
-		create_inf_window(L"Empty bag", L"You can't exchange\ntiles, because \nthe bag is empty.", false);
+	{	
+		if(bag.get_language() == Tile::English)
+			create_inf_window(L"Empty bag", L"You can't exchange\ntiles, because \nthe bag is empty.", false);
+		else 
+			create_inf_window(L"Pusty worek", L"Nie mozesz wymieniæ\nliter, poniewa¿ \nworek jest pusty.", false);
 		reset_outline_own_tiles();
 		return true;
 	}
@@ -549,13 +599,20 @@ bool Game::enter_key_service()
 bool Game::pass_function()
 {
 	if (check_tiles_on_board())
-	{
-		create_inf_window(L"Tiles on board!", L"You can't pass turn,\nbecause some are\non board.", false);
+	{ 
+		if (bag.get_language() == Tile::English)
+			create_inf_window(L"Tiles on board!", L"You can't pass turn,\nbecause some tiles \nare on board.", false);
+		else 
+			create_inf_window(L"Litery na planszy!", L"Nie mo¿esz oddaæ \nkolejki. Na planszy \nznajduj¹ siê litery.", false);
 		return true;
 	}
 	else
 	{
-		std::wcout << number++ << L". Player " << players[turn - 1].get_name() << L" passed turn.\n";
+		if(bag.get_language() == Tile::English)
+			std::wcout << number++ << L". Player " << players[turn - 1].get_name() << L" passed turn.\n";
+		else
+			std::wcout << number++ << L". Gracz " << players[turn - 1].get_name() << L" odda³ ruch.\n";
+		
 		change_turn();
 		return false;
 	}
@@ -565,12 +622,20 @@ void Game::exchange_tiles()
 {
 	if (check_tiles_on_board())
 	{
-		create_inf_window(L"Error with tiles!", L"You can't exchange\ntiles, because some\nare on board.", false);
+		if(bag.get_language() == Tile::English)
+			create_inf_window(L"Error with tiles!", L"You can't exchange\ntiles, because some\nare on board.", false);
+		else
+		{
+			create_inf_window(L"Litery na planszy!", L"Nie mo¿esz wymieniæ\nliter, gdy¿ twoje\nlitery znajduj¹ siê \nna planszy.", false);
+		}
 		reset_outline_own_tiles();
 	}
 	else
 	{
-		create_inf_window(L"Exchange", L"Please select tiles\nfor exchange, \nthen press Enter.", false);
+		if (bag.get_language() == Tile::English)
+			create_inf_window(L"Exchange", L"Please select tiles\nfor exchange, \nthen press Enter.", false);
+		else
+			create_inf_window(L"Wymiana", L"Proszê wybraæ litery\ndo wymiany, \nnastêpnie nacisn¹æ \nenter.", false);
 
 		sf::Event event;
 		window.waitEvent(event);
@@ -616,13 +681,21 @@ void Game::exchange_tiles()
 			if (!check_tiles_on_board())
 			{
 				players[turn - 1].exchange_tiles(bag);
-				std::wcout << number++ << L". Player " << players[turn - 1].get_name() << L" exchanged own tiles.\n";
+				if (bag.get_language() == Tile::English)
+					std::wcout << number++ << L". Player " << players[turn - 1].get_name() << L" exchanged own tiles.\n";
+				else 
+					std::wcout << number++ << L". Gracz " << players[turn - 1].get_name() << L" wymieni³ w³asne litery.\n";
+				
 				change_turn();
 			}
 		}
 		else
-			create_inf_window(L"No tiles for exchange!", L"You haven't choosed\ntiles for exchange.", false);
-
+		{
+			if (bag.get_language() == Tile::English)
+				create_inf_window(L"No tiles for exchange!", L"You haven't choosed\ntiles for exchange.", false);
+			else
+				create_inf_window(L"Brak liter do wymiany!", L"Nie wybra³eœ\nliter na wymianê.", false);
+		}
 		display_all();
 
 		return;
@@ -1017,10 +1090,21 @@ void Game::end_game()
 
 	display_all();
 
-	std::wstring str = L"Congratulations,\n";
-	str += players[any_player_without_tiles()].get_name();
-	str += L"\nwon.";
-	//create_inf_window("End game", str, false);
+	if (bag.get_language() == Tile::English)
+	{
+		std::wstring str = L"Congratulations,\n";
+		str += players[any_player_without_tiles()].get_name();
+		str += L"\nwon.";
+		create_inf_window(L"End game", str, false);
+	}
+	else
+	{
+		std::wstring str = L"Gratulacje,\n";
+		str += players[any_player_without_tiles()].get_name();
+		str += L"\nwygra³(a).";
+		create_inf_window(L"Koniec gry", str, false);
+	}
+	
 }
 
 void Game::check_words(int &points, std::vector<std::wstring> &incorrect_words, std::vector<std::wstring> &correct_words)
@@ -1271,7 +1355,12 @@ void Game::blank(bool reset)
 				{
 					if (!reset)
 					{
-						char letter = create_inf_window(L"Blank", L"Please type letter,\nwhich will replace\nblank.", true);
+						wchar_t letter;
+						if(bag.get_language() == Tile::English)
+							 letter = create_inf_window(L"Blank", L"Please type letter,\nwhich will replace\nblank.", true);
+						else
+							letter = create_inf_window(L"Blank", L"Proszê wpisaæ literê,\nktór¹ zamieniasz \nza blanka.", true);
+						
 						//getting letter for blank
 
 						board[i][j]->get_tile()->set_letter(letter);
@@ -1286,8 +1375,11 @@ void Game::blank(bool reset)
 }
 
 void Game::create_inf_window(std::vector<std::wstring> &inc_words)
-{
-	set_inf_window(L"Incorrect words!");
+{	
+	if (bag.get_language() == Tile::English)
+		set_inf_window(L"Incorrect words!");
+	else
+		set_inf_window(L"Niepoprawne s³owo(a)!");
 	display_inc_words(inc_words);
 	wait_close_event();
 }
@@ -1309,6 +1401,10 @@ void Game::wait_close_event()
 			if (event.type == sf::Event::KeyPressed)
 			{
 				if (event.key.code == sf::Keyboard::Escape)
+
+					while(event.type != sf::Event::KeyReleased)
+						info_window.pollEvent(event);
+
 					info_window.close();
 			}
 			else if (event.type == sf::Event::Closed)
@@ -1317,7 +1413,7 @@ void Game::wait_close_event()
 	}
 }
 
-char Game::wait_close_event_letter()
+int Game::wait_close_event_letter()
 {
 	sf::Event event;
 
@@ -1326,11 +1422,8 @@ char Game::wait_close_event_letter()
 		{
 			if (event.type == sf::Event::TextEntered)
 			{
-				if (event.text.unicode >= 'a' && event.text.unicode <= 'z')
-				{
 					info_window.close();
 					return event.text.unicode;
-				}
 			}
 		}
 	}
@@ -1403,7 +1496,11 @@ int Game::player_no_input()
 						}
 						else 
 						{
-							create_inf_window(L"Incorrect data", L"You can choose only\n1, 2, 3 or 4 players.", false);
+							if(bag.get_language() == Tile::English)
+								create_inf_window(L"Incorrect data", L"You can choose only\n1, 2, 3 or 4 players.", false);
+							else
+								create_inf_window(L"Niepoprawne dane", L"Mo¿esz wybraæ\n1, 2, 3 lub 4 \ngraczy.", false);
+							
 							menu_sprite.setPosition(0.f, 0.f);
 						}
 					}
@@ -1485,7 +1582,10 @@ std::vector<std::wstring> Game::get_players_names(int no)
 					}
 					else 
 					{
-						create_inf_window(L"Incorrect data", L"Name of player\nshould have from\n1 to 10 characters", false);
+						if(bag.get_language() == Tile::English)
+							create_inf_window(L"Incorrect data", L"Name of player\nshould have from\n1 to 10 characters", false);
+						else
+							create_inf_window(L"Niepoprawne dane", L"Nazwa gracza \nmo¿e zawieraæ \nod 1 do 10 \nznaków", false);
 						menu_sprite.setPosition(0.f, 0.f);
 					}
 				}
@@ -1688,37 +1788,55 @@ bool Game::control_enter()
 		}
 		catch (EX_lack_of_tiles_on_board)
 		{
-			create_inf_window(L"No tiles on board!", L"You haven't added\nnew tiles during\nyour turn!", false);
+			if(bag.get_language() == Tile::English)
+				create_inf_window(L"No tiles on board!", L"You haven't added\nnew tiles during\nyour turn!", false);
+			else
+				create_inf_window(L"Brak liter na planszy!", L"Podczas twojego \nruchu nie po³o¿y³eœ\n¿adnej litery.", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_empty_space_between_tiles)
 		{
-			create_inf_window(L"Empty space betwwen tiles!", L"Tiles, which you \nhave put have empty \nspace between them.", false);
+			if (bag.get_language() == Tile::English)
+				create_inf_window(L"Empty space betwwen tiles!", L"Tiles, which you \nhave put have empty \nspace between them.", false);
+			else
+				create_inf_window(L"Wolne pola pomiêdzy literami!", L"Miêdzy twoimi \nliterami znajduj¹ \nsiê wolne pola.", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_not_common_line)
 		{
-			create_inf_window(L"Lack of common row or column!", L"Lack of common\nrow or column!", false);
+			if (bag.get_language() == Tile::English)
+				create_inf_window(L"Lack of common row or column!", L"Lack of common\nrow or column!", false);
+			else
+				create_inf_window(L"Brak wspólnej kolumny lub wiersza!", L"Brak wspólnej\nkolumny lub \nwiersza!", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_bad_start)
 		{
-			create_inf_window(L"Bad start!", L"In first move\none of tiles\nhave to lay\non middle field!", false);
+			if (bag.get_language() == Tile::English)
+				create_inf_window(L"Bad start!", L"In first move\none of tiles\nhave to lay\non middle field!", false);
+			else
+				create_inf_window(L"Niepoprawny pocz¹tek!", L"W pierwszym ruchu\nmusisz po³o¿yæ\nliterê na\nœrodkowym polu.", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_bad_start_with_one_tile)
 		{
-			create_inf_window(L"Incorrect word!", L"You mustn't put\nonly one tile\nat the begining\nof game.", false);
+			if (bag.get_language() == Tile::English)
+				create_inf_window(L"Incorrect word!", L"You mustn't put\nonly one tile\nat the begining\nof game.", false);
+			else
+				create_inf_window(L"Niepoprawne s³owo!", L"Nie mo¿esz u³o¿yæ\ntylko jednej litery\nna pocz¹tku gry.", false);
 			blank(true);
 			return false;
 		}
 		catch (EX_lack_of_crossword)
 		{
-			create_inf_window(L"Lack of crossword!", L"Your tiles don't\nforms a crossword!", false);
+			if (bag.get_language() == Tile::English)
+				create_inf_window(L"Lack of crossword!", L"Your tiles don't\nforms a crossword!", false);
+			else
+				create_inf_window(L"Brak krzy¿ówki!", L"Twoje litery\nnie tworz¹ \nkrzy¿ówki!", false);
 			blank(true);
 			return false;
 		}
@@ -1735,7 +1853,12 @@ bool Game::control_enter()
 			players[turn - 1] += points;
 			update_points();
 			update_no_tiles_in_bag();
-			std::wcout << number << L". Player " << players[turn - 1].get_name() << L" played with words: ";
+
+			if(bag.get_language() == Tile::English)
+				std::wcout << number << L". Player " << players[turn - 1].get_name() << L" played with words: ";
+			else
+				std::wcout << number << L". Gracz " << players[turn - 1].get_name() << L" u³o¿y³ s³owo(a): ";
+			
 			for (int i = 0; i < correct_words.size(); i++)
 			{
 				std::wcout << correct_words[i];
@@ -1773,7 +1896,7 @@ bool Game::control_enter()
 	return true;
 }
 
-char Game::create_inf_window(std::wstring title, std::wstring comment, bool wait_letter)
+int Game::create_inf_window(std::wstring title, std::wstring comment, bool wait_letter)
 {
 	set_inf_window(title);
 	sf::Text text;
@@ -1787,6 +1910,8 @@ char Game::create_inf_window(std::wstring title, std::wstring comment, bool wait
 	if (!wait_letter)
 	{
 		wait_close_event();
+
+		return 0; //returnig value doesn't matter
 	}
 	else 
 		return wait_close_event_letter();
@@ -1797,7 +1922,10 @@ void Game::display_inc_words(std::vector<std::wstring> &words)
 	sf::Text text1, text2;
 	text1.setFont(font);
 	text2.setFont(font);
-	text1.setString("Incorrect words:");
+	if (bag.get_language() == Tile::English)
+		text1.setString("Incorrect words:");
+	else
+		text1.setString(L"Niepoprawne s³owa:");
 	text1.setPosition(72 * scale_x, 30 * scale_y);
 	text1.setCharacterSize(static_cast<unsigned int>(text1.getCharacterSize() * scale_x));
 	text2.setCharacterSize(static_cast<unsigned int>(text2.getCharacterSize() * scale_x));

@@ -131,11 +131,11 @@ class Game {
 	//tools for searching words from board 
 
 	void create_inf_window(std::vector<std::wstring> &inc_words);
-	char create_inf_window(std::wstring title, std::wstring comment, bool wait_letter);
+	int create_inf_window(std::wstring title, std::wstring comment, bool wait_letter);
 	void display_inc_words(std::vector<std::wstring> &words);
 	void set_inf_window(std::wstring name);
 	void wait_close_event();
-	char wait_close_event_letter();
+	int wait_close_event_letter();
 	//tools for creating window with info about errors	
 
 	void reset_outline_own_tiles();
