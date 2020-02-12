@@ -52,15 +52,17 @@ Dictionary::Dictionary()
 	if (!file_in.is_open())
 		std::cout << "cannot open dictionary file :(";
 
-	std::string bufor_str;
-		std::wstring bufor_wstr;
+	std::wstring bufor_wstr;
+	
 	while (!file_in.eof()) 
 	{
-		file_in >> bufor_wstr;
-		//bufor_wstr = wstring_from_bytes_d(bufor_str); //converting string to wstring
+		file_in.imbue(std::locale(std::locale::empty(), new std::codecvt_utf8<wchar_t>));
+		//setting up input from file in UTF-8 format encoding
+
+		std::getline(file_in, bufor_wstr);
 
 		words.insert(bufor_wstr);
-	}  //loading words to dictionary
+	}  //loading words into dictionary
 }
 
 bool Dictionary::correct_word(std::wstring word, int language)

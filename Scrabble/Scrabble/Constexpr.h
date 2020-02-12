@@ -166,8 +166,8 @@ constexpr int u_value_pl = 3;
 constexpr int w_value_pl = 1;
 constexpr int y_value_pl = 2;
 constexpr int z_value_pl = 1;
-constexpr int Ÿ_value_pl = 5;
-constexpr int ¿_value_pl = 9;
+constexpr int Ÿ_value_pl = 9;
+constexpr int ¿_value_pl = 5;
 
 #pragma endregion
 
