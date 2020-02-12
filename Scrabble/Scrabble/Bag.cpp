@@ -310,20 +310,20 @@ Tile * Bag::give_tile()
 
 		do
 		{
-			temp_tile = eng_tiles[draw_lots(random_generator)];
+			temp_tile = tiles[draw_lots(random_generator)];
 		} while (temp_tile->get_used());
 
 		temp_tile->set_used(true);
 
 		int _index = 0;
-		while (eng_tiles[_index] != temp_tile)
+		while (tiles[_index] != temp_tile)
 		{
 			_index++;
 		}
 
-		Tile * for_swap = eng_tiles[no_of_free_tiles];
-		eng_tiles[no_of_free_tiles] = eng_tiles[_index];
-		eng_tiles[_index] = for_swap;
+		Tile * for_swap = tiles[no_of_free_tiles];
+		tiles[no_of_free_tiles] = tiles[_index];
+		tiles[_index] = for_swap;
 
 		//swaping tiles used and not used
 		no_of_free_tiles--;
@@ -342,7 +342,7 @@ int Bag::get_number_of_free_tiles()
 Tile* Bag::exchange_tile(Tile* old_tile)
 {
 	if (lang_ver == Tile::Language_ver::English)
-		tiles = eng_tiles;
+		tiles = tiles;
 	
 
 	if (no_of_free_tiles)
@@ -354,7 +354,7 @@ Tile* Bag::exchange_tile(Tile* old_tile)
 
 		do
 		{
-			temp_tile = eng_tiles[draw_lots(random_generator)];
+			temp_tile = tiles[draw_lots(random_generator)];
 		} while (temp_tile->get_used());
 		//drawing lots of new tile from bag
 
@@ -364,20 +364,20 @@ Tile* Bag::exchange_tile(Tile* old_tile)
 		old_tile->reset_outline();
 
 		int _index = 0;
-		while (eng_tiles[_index] != temp_tile)
+		while (tiles[_index] != temp_tile)
 		{
 			_index++;
 		}
 
 		int old_index = 0;
-		while (eng_tiles[old_index] != old_tile)
+		while (tiles[old_index] != old_tile)
 		{
 			old_index++;
 		} //getting index of old tile for exchange
 
-		Tile * for_swap = eng_tiles[_index];
-		eng_tiles[_index] = eng_tiles[old_index];
-		eng_tiles[old_index] = for_swap;
+		Tile * for_swap = tiles[_index];
+		tiles[_index] = tiles[old_index];
+		tiles[old_index] = for_swap;
 		//swaping a new tile with an old tile
 
 		return temp_tile;

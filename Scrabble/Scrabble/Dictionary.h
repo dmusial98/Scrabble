@@ -4,6 +4,8 @@
 #include <iostream>
 #include <algorithm>
 
+#include<locale>
+
 class Dictionary {
 
 	std::set<std::wstring> words;
@@ -11,7 +13,7 @@ class Dictionary {
 public:
 	Dictionary();
 	~Dictionary() = default;
-	bool correct_word(std::wstring word);
+	bool correct_word(std::wstring word, int language);
 
 
 };

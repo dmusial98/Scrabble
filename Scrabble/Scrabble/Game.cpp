@@ -1076,7 +1076,7 @@ void Game::check_words(int &points, std::vector<std::wstring> &incorrect_words, 
 	}
 	for (int i = 0; i < words.size(); i++)
 	{
-		if (!dictionary.correct_word(words[i])) 
+		if (!dictionary.correct_word(words[i], bag.get_language())) 
 		{
 			incorrect_words.push_back(words[i]);
 		}

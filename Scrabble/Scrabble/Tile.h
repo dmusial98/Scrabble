@@ -9,7 +9,7 @@
 
 class Tile {
 public:
-	enum Language_ver { Polish, English };
+	enum Language_ver { Polish = 0, English };
 
 private:
 	wchar_t letter;

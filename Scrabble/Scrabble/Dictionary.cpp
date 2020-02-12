@@ -43,26 +43,32 @@ std::wstring wstring_from_bytes_d(std::string const& str)
 
 Dictionary::Dictionary()
 {
-	std::ifstream file_in;
-	file_in.open("Dictionary/Collins Scrabble Words (2015).txt");
+	std::wifstream file_in;
+	//file_in.open("Dictionary/Collins Scrabble Words (2015).txt");
+
+	file_in.open("Dictionary/s³ownik.txt");
+
 
 	if (!file_in.is_open())
 		std::cout << "cannot open dictionary file :(";
 
 	std::string bufor_str;
-	std::wstring bufor_wstr;
+		std::wstring bufor_wstr;
 	while (!file_in.eof()) 
 	{
-		file_in >> bufor_str;
-		bufor_wstr = wstring_from_bytes_d(bufor_str); //converting string to wstring
+		file_in >> bufor_wstr;
+		//bufor_wstr = wstring_from_bytes_d(bufor_str); //converting string to wstring
 
 		words.insert(bufor_wstr);
 	}  //loading words to dictionary
 }
 
-bool Dictionary::correct_word(std::wstring word)
+bool Dictionary::correct_word(std::wstring word, int language)
+//language - 0 -> polish  1 -> english
 {
-	std::transform(word.begin(), word.end(), word.begin(), ::toupper);
+	if(language)
+		std::transform(word.begin(), word.end(), word.begin(), ::toupper);
+
 	std::set<std::wstring>::iterator iter = words.find(word);
 
 	if (iter == words.end()) 
