@@ -21,7 +21,7 @@ void Button::set_borders(float up, float down, float left, float right)
 }
 
 
-void Button::set_text(std::string str)
+void Button::set_text(std::wstring str)
 {
 	text.setString(str);
 }

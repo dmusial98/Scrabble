@@ -2,10 +2,9 @@
 //
 //- Wybór w polskim menu
 //- Po najechaniu na blanku niech wyœwietla informacjê jak¹ literê zastêpuje
-//- Wybrane sprawdzenie :
+//- Wybrane sprawdzenie
 //
-//- wymiana tylu p³ytek ile zosta³o w worku(byle nie wiêcej!)
-//- Error gdy przy wyborze p³ytek do wymiany kliknie siê na wolne pole : (((
+//- Dodanie licznika czasu
 //
 //	Dla multiplayer :
 //- £¹cznoœæ(opanowaæ za pomoc¹ SFML mam nadziejê)
@@ -26,16 +25,14 @@
 #include "Button.h"
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
+
 #include <vector>
 #include <string>
 #include <iostream>
-#include <cstdlib>
-#include <fstream>
 #include <algorithm>
 #include <typeinfo>
-#include<Windows.h>
-#include<locale.h>
-#include<cstdlib>
+#include <Windows.h>
+#include <locale.h>
 
 #pragma warning(disable:4996)
 
@@ -48,7 +45,7 @@ class Game {
 	Bag bag;
 	Dictionary* dictionary = nullptr;
 	float scale_x = 1, scale_y = 1;
-	Button end_turn, history, exchange, help, pass, options, exit;
+	Button end_turn, exchange, help, pass, options, exit;
 
 	
 	//SFML variables

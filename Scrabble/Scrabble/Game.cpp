@@ -241,33 +241,54 @@ void Game::setSprite()
 
 void Game::set_buttons()
 {
-	exit.set_borders(780.f * scale_y, 815.f * scale_y, 1095.f * scale_x, 1185.f * scale_x);
-	exit.set_text("Exit");
-	exit.set_scale(scale_x, scale_y);
+	if (bag.get_language() == Tile::English)
+	{
+		exit.set_borders(780.f * scale_y, 815.f * scale_y, 1095.f * scale_x, 1185.f * scale_x);
+		exit.set_text(L"Exit");
+		
+		options.set_text(L"Options");
+		options.set_borders(780.f * scale_y, 821.f * scale_y, 935.f * scale_x, 1085.f * scale_x);
+		
+		help.set_text(L"Help");
+		help.set_borders(730.f * scale_y, 775.f * scale_y, 965.f * scale_x, 1055.f * scale_x);
+		help.set_scale(scale_x, scale_y);
 
-	options.set_text("Options");
-	options.set_borders(780.f * scale_y, 821.f * scale_y, 935.f * scale_x, 1085.f * scale_x);
-	options.set_scale(scale_x, scale_y);
+		pass.set_text(L"Pass");
+		pass.set_borders(730.f * scale_y, 770.f * scale_y, 1095.f * scale_x, 1185.f * scale_x);
+		
+		exchange.set_text(L"Exchange");
+		exchange.set_borders(680.f * scale_y, 720.f * scale_y, 980.f * scale_x, 1150.f * scale_x);
+		
+		end_turn.set_text(L"End turn");
+		end_turn.set_borders(630.f * scale_y, 670.f * scale_y, 979.f * scale_x, 1159.f * scale_x);
+	}
+	else
+	{
+		exit.set_borders(780.f * scale_y, 815.f * scale_y, 1095.f * scale_x, 1238.f * scale_x);
+		exit.set_text(L"Wyjúcie");
 
-	help.set_text("Help");
-	help.set_borders(730.f * scale_y, 775.f * scale_y, 965.f * scale_x, 1055.f * scale_x);
-	help.set_scale(scale_x, scale_y);
+		options.set_text(L"Opcje");
+		options.set_borders(780.f * scale_y, 821.f * scale_y, 935.f * scale_x, 1085.f * scale_x);
 
-	pass.set_text("Pass");
-	pass.set_borders(730.f * scale_y, 770.f * scale_y, 1095.f * scale_x, 1185.f * scale_x);
-	pass.set_scale(scale_x, scale_y);
+		help.set_text(L"Pomoc");
+		help.set_borders(730.f * scale_y, 775.f * scale_y, 935.f * scale_x, 1025.f * scale_x);
+		help.set_scale(scale_x, scale_y);
 
-	exchange.set_text("Exchange");
-	exchange.set_borders(680.f * scale_y, 720.f * scale_y, 980.f * scale_x, 1150.f * scale_x);
-	exchange.set_scale(scale_x, scale_y);
+		pass.set_text(L"Poddaj");
+		pass.set_borders(730.f * scale_y, 770.f * scale_y, 1095.f * scale_x, 1225.f * scale_x);
 
-	end_turn.set_text("End turn");
-	end_turn.set_borders(630.f * scale_y, 670.f * scale_y, 905.f * scale_x, 1085.f * scale_x);
+		exchange.set_text(L"Wymiana");
+		exchange.set_borders(680.f * scale_y, 720.f * scale_y, 990.f * scale_x, 1160.f * scale_x);
+
+		end_turn.set_text(L"Zatwierdü");
+		end_turn.set_borders(630.f * scale_y, 670.f * scale_y, 979.f * scale_x, 1170.f * scale_x);
+	}
+
 	end_turn.set_scale(scale_x, scale_y);
-
-	history.set_text("History");
-	history.set_borders(630.f * scale_y, 670.f * scale_y, 1095.f * scale_x, 1245.f * scale_x);
-	history.set_scale(scale_x, scale_y);
+	options.set_scale(scale_x, scale_y);
+	pass.set_scale(scale_x, scale_y);
+	exchange.set_scale(scale_x, scale_y);
+	exit.set_scale(scale_x, scale_y);
 }
 
 void Game::set_texts_start()
@@ -403,10 +424,6 @@ void Game::control()
 			button_service(end_turn, (Game::fun_ptr)(&Game::enter_key_service));
 			continue;
 		}
-		else if (history.mouse_over(window))
-		{
-			//wyswietlenie okna z historia ulozonych slow :)
-		}
 		if (event.type == sf::Event::MouseButtonPressed)
 		{
 			mouse_position = sf::Mouse::getPosition(window);
@@ -490,7 +507,6 @@ void Game::display_buttons()
 	help.display(window);
 	pass.display(window);
 	exchange.display(window);
-	history.display(window);
 	end_turn.display(window);
 }
 
@@ -672,6 +688,11 @@ void Game::exchange_tiles()
 					}
 				}
 			}
+			else if (event.type == sf::Event::Closed)
+			{
+				window.close();
+			}
+
 			display_all();
 			window.waitEvent(event);
 		}

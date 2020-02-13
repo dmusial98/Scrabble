@@ -18,7 +18,7 @@ public:
 
 	void set_borders(float up, float down, float left, float right);
 	
-	void set_text(std::string str);
+	void set_text(std::wstring str);
 	void set_scale(float x, float y);
 
 	bool mouse_over(sf::RenderWindow &window);
