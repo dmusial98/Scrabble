@@ -102,6 +102,8 @@ void Tile::set_sprite(float scale_x, float scale_y)
 		file_name += "e1";
 	else if (letter == *L"³")
 		file_name += "l1";
+	else if (letter == *L"ñ")
+		file_name += "n1";
 	else if (letter == *L"ó")
 		file_name += "o1";
 	else if (letter == *L"œ")
@@ -117,8 +119,16 @@ void Tile::set_sprite(float scale_x, float scale_y)
 
 	if(letter == 0)
 	{
-		if (!texture.loadFromFile("Textures/Tiles/English/Blank.png"))
-			std::cout << "tile texture load error" << std::endl;
+		if (language == Tile::Polish)
+		{
+			if (!texture.loadFromFile("Textures/Tiles/Polskie/blank.png"))
+				std::cout << "tile texture load error" << std::endl;	
+		}
+		else
+		{
+			if (!texture.loadFromFile("Textures/Tiles/English/Blank.png"))
+				std::cout << "tile texture load error" << std::endl;
+		}
 	}
 	else
 	{

@@ -303,14 +303,15 @@ Tile * Bag::give_tile()
 
 	if (no_of_free_tiles != -1)
 	{
-		std::mt19937 random_generator(time(NULL));
-		std::uniform_int_distribution<int>	draw_lots(0, no_of_free_tiles);
+		unsigned seed = std::chrono::steady_clock::now().time_since_epoch().count();
+		std::default_random_engine e(seed);
+		std::uniform_int_distribution<int> distr(0, no_of_free_tiles);
 
 		Tile * temp_tile;
 
 		do
 		{
-			temp_tile = tiles[draw_lots(random_generator)];
+			temp_tile = tiles[distr(e)];
 		} while (temp_tile->get_used());
 
 		temp_tile->set_used(true);
@@ -340,22 +341,22 @@ int Bag::get_number_of_free_tiles()
 }
 
 Tile* Bag::exchange_tile(Tile* old_tile)
-{
-	if (lang_ver == Tile::Language_ver::English)
-		tiles = tiles;
-	
+{	
 
 	if (no_of_free_tiles)
 	{
-		std::mt19937 random_generator(time(NULL));
-		std::uniform_int_distribution<int>	draw_lots(0, no_of_free_tiles);
+		unsigned seed = std::chrono::steady_clock::now().time_since_epoch().count();
+		std::default_random_engine e(seed);
+		std::uniform_int_distribution<int> distr(0, no_of_free_tiles);
+
 
 		Tile * temp_tile;
 
 		do
 		{
-			temp_tile = tiles[draw_lots(random_generator)];
-		} while (temp_tile->get_used());
+			temp_tile = tiles[distr(e)];	
+		} 
+		while (temp_tile->get_used());
 		//drawing lots of new tile from bag
 
 		temp_tile->set_used(true); //the new tile 

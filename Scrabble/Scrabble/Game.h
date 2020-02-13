@@ -1,7 +1,6 @@
 //TO_DO
-//- Stawianie literek z w³asnych na w³asne
 //
-//- Polska wersja i wybór w polskim menu
+//- Wybór w polskim menu
 //- Po najechaniu na blanku niech wyœwietla informacjê jak¹ literê zastêpuje
 //- Wybrane sprawdzenie :
 //
@@ -117,16 +116,16 @@ class Game {
 
 	bool check_tiles_on_board();
 	void blank(bool reset);
-	void count_points(int mini_ind, int max_ind, int &points, Field field, Orientation orient);
+	void count_points(int mini_ind, int max_ind, std::vector<int> &points, Field field, Orientation orient);
 	bool check_bonus();
 	int any_player_without_tiles();
 	void end_game();
 	//game logic
 
-	void check_words(int &points, std::vector<std::wstring> &incorrect_words, std::vector<std::wstring> &correct_words);
-	void get_main_word_horizontally(Field *array, std::vector<std::wstring> &words, int &points);
-	void get_main_word_upright(Field array[], std::vector<std::wstring> &words, int &points);
-	void get_word_from_one_tile(Field field, Orientation orient, std::vector<std::wstring> &words, int &points);
+	void check_words(std::vector<int> &points, std::vector<std::wstring> &incorrect_words, std::vector<std::wstring> &correct_words);
+	void get_main_word_horizontally(Field *array, std::vector<std::wstring> &words, std::vector<int> &points);
+	void get_main_word_upright(Field array[], std::vector<std::wstring> &words, std::vector<int> &points);
+	void get_word_from_one_tile(Field field, Orientation orient, std::vector<std::wstring> &words, std::vector<int> &points);
 	void search_letter(int &value, int border, bool &end, bool increase);
 	//tools for searching words from board 
 

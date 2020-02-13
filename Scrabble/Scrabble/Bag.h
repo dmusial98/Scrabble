@@ -4,8 +4,8 @@
 #include "Constexpr.h"
 #include "Tile.h"
 #include <random>
-#include <ctime>
 #include <iostream>
+#include <chrono>
 
 class Bag {
 

@@ -620,7 +620,7 @@ bool Game::pass_function()
 
 void Game::exchange_tiles()
 {
-	if (check_tiles_on_board())
+	if (check_tiles_on_board()) //if on the board aren't own tiles 
 	{
 		if(bag.get_language() == Tile::English)
 			create_inf_window(L"Error with tiles!", L"You can't exchange\ntiles, because some\nare on board.", false);
@@ -764,7 +764,7 @@ int Game::get_number_own_tile(bool from)
 		return index;
 }
 
-void Game::get_main_word_horizontally(Field * array, std::vector<std::wstring> &words, int &points)
+void Game::get_main_word_horizontally(Field * array, std::vector<std::wstring> &words, std::vector<int> &points)
 {
 	int index = 0;
 	int arr_min[no_of_tiles_for_player]{ 100, 100, 100, 100, 100, 100, 100 };
@@ -820,7 +820,7 @@ void Game::get_main_word_horizontally(Field * array, std::vector<std::wstring> &
 	}
 }
 
-void Game::get_main_word_upright(Field array[], std::vector<std::wstring> &words, int &points)
+void Game::get_main_word_upright(Field array[], std::vector<std::wstring> &words, std::vector<int> &points)
 {
 	int index = 0;
 	int arr_min[no_of_tiles_for_player]{ 100, 100, 100, 100, 100, 100, 100 };
@@ -877,7 +877,7 @@ void Game::get_main_word_upright(Field array[], std::vector<std::wstring> &words
 	}
 }
 
-void Game::get_word_from_one_tile(Field field, Orientation orient, std::vector<std::wstring> &words, int &points)
+void Game::get_word_from_one_tile(Field field, Orientation orient, std::vector<std::wstring> &words, std::vector<int> &points)
 {
 	std::wstring word;
 	bool end = false, new_word = false;
@@ -967,7 +967,7 @@ void Game::search_letter(int &value, int border, bool &end, bool increase)
 	}
 }
 
-void Game::count_points(int min_ind, int max_ind, int &points, Field field, Orientation orient)
+void Game::count_points(int min_ind, int max_ind, std::vector<int> &points, Field field, Orientation orient)
 {  
 	if (orient == horizontally)
 	{
@@ -997,10 +997,10 @@ void Game::count_points(int min_ind, int max_ind, int &points, Field field, Orie
 					triple_word++;
 		}  //count value of this word
 
-		points += temp_points * 2 * double_word + temp_points * 3 * triple_word;
-
 		if (!double_word && !triple_word)
-			points += temp_points;
+			points.push_back(temp_points);
+		else
+			points.push_back(temp_points * 2 * double_word + temp_points * 3 * triple_word);
 		//when aren't word_bonuses
 	}
 	else if (orient == upright)
@@ -1031,10 +1031,10 @@ void Game::count_points(int min_ind, int max_ind, int &points, Field field, Orie
 					triple_word++;
 		}  //count value of this word
 
-		points += temp_points * 2 * double_word + temp_points * 3 * triple_word;
-
 		if (!double_word && !triple_word)
-			points += temp_points;
+			points.push_back(temp_points);
+		else
+			points.push_back(temp_points * 2 * double_word + temp_points * 3 * triple_word);
 		//when aren't bonuses
 	}
 }
@@ -1107,7 +1107,7 @@ void Game::end_game()
 	
 }
 
-void Game::check_words(int &points, std::vector<std::wstring> &incorrect_words, std::vector<std::wstring> &correct_words)
+void Game::check_words(std::vector<int> &points, std::vector<std::wstring> &incorrect_words, std::vector<std::wstring> &correct_words)
 {
 	std::vector<std::wstring> words;
 	Orientation orientation = _exception;
@@ -1519,11 +1519,11 @@ int Game::player_no_input()
 				}
 				display_start();
 			}
-			else if (event.type == sf::Event::Closed)
-			{
-				window.close();
-				throw EX_exit{};
-			}
+		}
+		else if (event.type == sf::Event::Closed)
+		{
+			window.close();
+			throw EX_exit{};
 		}
 	}
 }
@@ -1647,6 +1647,8 @@ void Game::control_own_tiles(sf::Vector2i & mouse_position)
 			players[turn - 1].get_tile(index)->set_last_used(true);
 			players[turn - 1].get_tile(index)->set_outline(sf::Color(outline_color_tile));
 
+			mouse_position = sf::Mouse::getPosition(window);
+
 			if (index_2d.x <= no_of_field && !board[index_2d.x][index_2d.y]->get_tile())
 			{ //when on field isn't different tile
 				set_tile_on_board(index_2d, *players[turn - 1].get_tile(index));
@@ -1720,7 +1722,7 @@ void Game::control_board_left(sf::Vector2i & mouse_position)
 					//setting tile on board or cancelling last move
 				}
 				else if
-					(
+					( //from board to own tiles
 						mouse_position.x > left_border_own_tiles_pix * scale_x
 						&&	mouse_position.x < right_border_own_tiles_pix * scale_x
 						&&	mouse_position.y > up_border_own_tiles_pix * scale_y
@@ -1728,7 +1730,7 @@ void Game::control_board_left(sf::Vector2i & mouse_position)
 						)
 				{
 					int index_own_tile = get_number_own_tile(false);
-					if (!players[turn - 1].get_tile(index_own_tile))
+					if (!players[turn - 1].get_tile(index_own_tile)) 
 					{
 						players[turn - 1].set_tile(index_own_tile, board[index.x][index.y]->get_tile());
 						players[turn - 1].get_tile(index_own_tile)->set_last_used(false);
@@ -1777,7 +1779,7 @@ void Game::control_board_right(sf::Vector2i & mouse_position)
 bool Game::control_enter()
 {
 	{
-		int points = 0;
+		std::vector<int> points;
 		std::vector<std::wstring> incorrect_words, correct_words;
 
 		blank(false);
@@ -1844,13 +1846,15 @@ bool Game::control_enter()
 		if (incorrect_words.size() == 0)
 		{
 			if (check_bonus())
-			{
 				players[turn - 1] += bonus;
-			}
+			
 			reset_outline_tiles_on_board();
 			players[turn - 1].set_empty_tiles(true);
 			players[turn - 1].get_tiles(bag);
-			players[turn - 1] += points;
+
+			for(int i = 0; i < points.size(); i++)
+				players[turn - 1] += points[i];
+			
 			update_points();
 			update_no_tiles_in_bag();
 
@@ -1861,7 +1865,7 @@ bool Game::control_enter()
 			
 			for (int i = 0; i < correct_words.size(); i++)
 			{
-				std::wcout << correct_words[i];
+				std::wcout << correct_words[i] << L" +" << points[i];
 			
 				if (i != correct_words.size() - 1)
 				{
@@ -1911,7 +1915,7 @@ int Game::create_inf_window(std::wstring title, std::wstring comment, bool wait_
 	{
 		wait_close_event();
 
-		return 0; //returnig value doesn't matter
+		return 0; //returnig value doesn't matter in this situation
 	}
 	else 
 		return wait_close_event_letter();
