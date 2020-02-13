@@ -1,1 +1,1 @@
-# Scrabble
+Scrabble game in C++. 
