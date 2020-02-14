@@ -428,14 +428,14 @@ void Game::control()
 			if (event.mouseButton.button == sf::Mouse::Button::Left)
 			{
 				if (in_area(mouse_position, left_border_own_tiles_pix, right_border_own_tiles_pix,
-					up_border_own_tiles_pix, down_border_own_tiles_pix))  
+					up_border_own_tiles_pix, down_border_own_tiles_pix))
 					//get tile from own tiles of player
 				{
 					control_own_tiles(mouse_position);
 				}
 				else if
 					(in_area(mouse_position, left_border_pix, right_border_pix,
-						up_border_pix, down_border_pix))  
+						up_border_pix, down_border_pix))
 					//shift tile from field on different field or own tiles
 				{
 					control_board_left(mouse_position);
@@ -453,7 +453,7 @@ void Game::control()
 		else if (event.type == sf::Event::KeyPressed)
 		{
 			if (event.key.code == sf::Keyboard::Escape)
-				window.close();
+				create_exit_window();
 			else if (event.key.code == sf::Keyboard::Enter)
 			{
 				if (enter_key_service())
@@ -470,10 +470,7 @@ void Game::control()
 			}
 		}
 		else if (event.type == sf::Event::Closed)
-			window.close();
-	
-		/*confirm_button.reset_iluminate();
-		display_all();*/
+			create_exit_window();	
 	}
 }
 
@@ -591,7 +588,7 @@ bool Game::exchange_tiles_main()
 
 bool Game::close_window()
 {
-	window.close();
+	create_exit_window();
 	return false;
 }
 
@@ -2004,6 +2001,35 @@ int Game::create_inf_window(std::wstring title, std::wstring comment, bool wait_
 	}
 	else 
 		return wait_close_event_letter();
+}
+
+void Game::create_exit_window()
+{
+	set_inf_window(L"Exit game");
+	sf::Text text;
+
+	if (bag.get_language() == Tile::Language_ver::English)
+		text.setString(L"Du you want to \nquit the game? \ny - yes   n - no");
+	else
+		text.setString(L"Czy chcesz \nzakoñczyæ grê? \nt - tak  n - nie ");
+
+	text.setFont(font);
+	text.setCharacterSize(static_cast<unsigned int>(text.getCharacterSize() * scale_x));
+	text.setPosition(50 * scale_x, 30 * scale_y);
+	info_window.draw(menu_sprite);
+	info_window.draw(text);
+	info_window.display();
+	wchar_t letter;
+
+	do
+	{
+		letter = wait_close_event_letter();;
+	} while (letter != *L"y" && letter != *L"n" && letter != *L"t");
+
+	if (letter == *L"y" || letter == *L"t")
+		window.close();
+		
+	info_window.close();
 }
 
 void Game::display_inc_words(std::vector<std::wstring> &words)

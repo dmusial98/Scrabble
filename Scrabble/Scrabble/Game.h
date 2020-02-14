@@ -130,6 +130,7 @@ class Game {
 
 	void create_inf_window(std::vector<std::wstring> &inc_words);
 	int create_inf_window(std::wstring title, std::wstring comment, bool wait_letter);
+	void create_exit_window();
 	void display_inc_words(std::vector<std::wstring> &words);
 	void set_inf_window(std::wstring name);
 	void wait_close_event();

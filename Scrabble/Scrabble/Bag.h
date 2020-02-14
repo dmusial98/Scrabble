@@ -16,7 +16,7 @@ private:
 	Tile* eng_tiles[no_of_tiles_in_bag];
 	Tile* pl_tiles[no_of_tiles_in_bag];
 	int no_of_free_tiles = no_of_tiles_in_bag - 1;
-	Tile::Language_ver lang_ver = Tile::Language_ver::English;
+	Tile::Language_ver lang_ver = Tile::Language_ver::Polish;
 	Tile** tiles = pl_tiles;
 
 public:		
