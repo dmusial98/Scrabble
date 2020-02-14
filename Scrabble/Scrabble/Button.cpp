@@ -49,11 +49,18 @@ bool Button::mouse_over(sf::RenderWindow &window)
 void Button::iluminate()
 {
 	text.setFillColor(blue);
+	is_iluminating_ = true;
 }
 
 void Button::reset_iluminate()
 {
 	text.setFillColor(sf::Color::White);
+	is_iluminating_ = false;
+}
+
+bool Button::is_iluminating()
+{
+	return is_iluminating_;
 }
 
 void Button::display(sf::RenderWindow & window)

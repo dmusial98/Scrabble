@@ -12,6 +12,7 @@ class Button
 	float up_border, down_border, left_border, right_border;
 	sf::Text text;
 	sf::Font font;
+	bool is_iluminating_ = false;
 
 public:
 	Button();
@@ -24,6 +25,7 @@ public:
 	bool mouse_over(sf::RenderWindow &window);
 	void iluminate();
 	void reset_iluminate();
+	bool is_iluminating();
 
 	void display(sf::RenderWindow & window);
 

@@ -3,6 +3,7 @@
 //- Wybór w polskim menu
 //- Po najechaniu na blanku niech wyœwietla informacjê jak¹ literê zastêpuje
 //- Wybrane sprawdzenie
+//- Okno z zapytaniem czy chcesz wyjœæ z gry?
 //
 //- Dodanie licznika czasu
 //
@@ -45,7 +46,7 @@ class Game {
 	Bag bag;
 	Dictionary* dictionary = nullptr;
 	float scale_x = 1, scale_y = 1;
-	Button end_turn, exchange, help, pass, options, exit;
+	Button confirm_button, exchange_button, help_button, pass_button, options_button, exit_button;
 
 	
 	//SFML variables

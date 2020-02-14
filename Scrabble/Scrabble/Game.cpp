@@ -204,9 +204,6 @@ void Game::update_points()
 	}
 }
 
-//convert string to wstring 
-
-
 void Game::update_no_tiles_in_bag()
 {
 	char temp[5];
@@ -243,52 +240,52 @@ void Game::set_buttons()
 {
 	if (bag.get_language() == Tile::English)
 	{
-		exit.set_borders(780.f * scale_y, 815.f * scale_y, 1095.f * scale_x, 1185.f * scale_x);
-		exit.set_text(L"Exit");
+		exit_button.set_borders(780.f * scale_y, 815.f * scale_y, 1095.f * scale_x, 1185.f * scale_x);
+		exit_button.set_text(L"Exit");
 		
-		options.set_text(L"Options");
-		options.set_borders(780.f * scale_y, 821.f * scale_y, 935.f * scale_x, 1085.f * scale_x);
+		options_button.set_text(L"Options");
+		options_button.set_borders(780.f * scale_y, 821.f * scale_y, 935.f * scale_x, 1085.f * scale_x);
 		
-		help.set_text(L"Help");
-		help.set_borders(730.f * scale_y, 775.f * scale_y, 965.f * scale_x, 1055.f * scale_x);
-		help.set_scale(scale_x, scale_y);
+		help_button.set_text(L"Help");
+		help_button.set_borders(730.f * scale_y, 775.f * scale_y, 965.f * scale_x, 1055.f * scale_x);
+		help_button.set_scale(scale_x, scale_y);
 
-		pass.set_text(L"Pass");
-		pass.set_borders(730.f * scale_y, 770.f * scale_y, 1095.f * scale_x, 1185.f * scale_x);
+		pass_button.set_text(L"Pass");
+		pass_button.set_borders(730.f * scale_y, 770.f * scale_y, 1095.f * scale_x, 1185.f * scale_x);
 		
-		exchange.set_text(L"Exchange");
-		exchange.set_borders(680.f * scale_y, 720.f * scale_y, 980.f * scale_x, 1150.f * scale_x);
+		exchange_button.set_text(L"Exchange");
+		exchange_button.set_borders(680.f * scale_y, 720.f * scale_y, 980.f * scale_x, 1150.f * scale_x);
 		
-		end_turn.set_text(L"End turn");
-		end_turn.set_borders(630.f * scale_y, 670.f * scale_y, 979.f * scale_x, 1159.f * scale_x);
+		confirm_button.set_text(L"Confirm");
+		confirm_button.set_borders(630.f * scale_y, 670.f * scale_y, 989.f * scale_x, 1150.f * scale_x);
 	}
 	else
 	{
-		exit.set_borders(780.f * scale_y, 815.f * scale_y, 1095.f * scale_x, 1238.f * scale_x);
-		exit.set_text(L"Wyjúcie");
+		exit_button.set_borders(780.f * scale_y, 815.f * scale_y, 1095.f * scale_x, 1238.f * scale_x);
+		exit_button.set_text(L"Wyjúcie");
 
-		options.set_text(L"Opcje");
-		options.set_borders(780.f * scale_y, 821.f * scale_y, 935.f * scale_x, 1085.f * scale_x);
+		options_button.set_text(L"Opcje");
+		options_button.set_borders(780.f * scale_y, 821.f * scale_y, 935.f * scale_x, 1085.f * scale_x);
 
-		help.set_text(L"Pomoc");
-		help.set_borders(730.f * scale_y, 775.f * scale_y, 935.f * scale_x, 1025.f * scale_x);
-		help.set_scale(scale_x, scale_y);
+		help_button.set_text(L"Pomoc");
+		help_button.set_borders(730.f * scale_y, 775.f * scale_y, 935.f * scale_x, 1025.f * scale_x);
+		help_button.set_scale(scale_x, scale_y);
 
-		pass.set_text(L"Poddaj");
-		pass.set_borders(730.f * scale_y, 770.f * scale_y, 1095.f * scale_x, 1225.f * scale_x);
+		pass_button.set_text(L"Poddaj");
+		pass_button.set_borders(730.f * scale_y, 770.f * scale_y, 1095.f * scale_x, 1225.f * scale_x);
 
-		exchange.set_text(L"Wymiana");
-		exchange.set_borders(680.f * scale_y, 720.f * scale_y, 990.f * scale_x, 1160.f * scale_x);
+		exchange_button.set_text(L"Wymiana");
+		exchange_button.set_borders(680.f * scale_y, 720.f * scale_y, 990.f * scale_x, 1160.f * scale_x);
 
-		end_turn.set_text(L"Zatwierdü");
-		end_turn.set_borders(630.f * scale_y, 670.f * scale_y, 979.f * scale_x, 1170.f * scale_x);
+		confirm_button.set_text(L"Zatwierdü");
+		confirm_button.set_borders(630.f * scale_y, 670.f * scale_y, 979.f * scale_x, 1170.f * scale_x);
 	}
 
-	end_turn.set_scale(scale_x, scale_y);
-	options.set_scale(scale_x, scale_y);
-	pass.set_scale(scale_x, scale_y);
-	exchange.set_scale(scale_x, scale_y);
-	exit.set_scale(scale_x, scale_y);
+	confirm_button.set_scale(scale_x, scale_y);
+	options_button.set_scale(scale_x, scale_y);
+	pass_button.set_scale(scale_x, scale_y);
+	exchange_button.set_scale(scale_x, scale_y);
+	exit_button.set_scale(scale_x, scale_y);
 }
 
 void Game::set_texts_start()
@@ -397,31 +394,31 @@ void Game::control()
 		display_all();
 		window.waitEvent(event);
 
-		if (exit.mouse_over(window))
+		if (exit_button.mouse_over(window))
 		{
-			button_service(exit, (Game::fun_ptr)(&Game::close_window));
+			button_service(exit_button, (Game::fun_ptr)(&Game::close_window));
 		}
-		else if (options.mouse_over(window))
+		else if (options_button.mouse_over(window))
 		{
 			//wywolanie okna z zapisem gry, zatrzymniem czasu itd.
 		}
-		else if (help.mouse_over(window))
+		else if (help_button.mouse_over(window))
 		{
 			//wyswietlenie okna z pomoca - zasady, sterowanie itd.
 		}
-		else if (pass.mouse_over(window))
+		else if (pass_button.mouse_over(window))
 		{
-			button_service(pass, (Game::fun_ptr)(&Game::pass_function));
+			button_service(pass_button, (Game::fun_ptr)(&Game::pass_function));
 			continue;
 		}
-		else if (exchange.mouse_over(window))
+		else if (exchange_button.mouse_over(window))
 		{
-			button_service(exchange, (Game::fun_ptr)(&Game::exchange_tiles_main));
+			button_service(exchange_button, (Game::fun_ptr)(&Game::exchange_tiles_main));
 			continue;
 		}
-		else if (end_turn.mouse_over(window))
+		else if (confirm_button.mouse_over(window))
 		{
-			button_service(end_turn, (Game::fun_ptr)(&Game::enter_key_service));
+			button_service(confirm_button, (Game::fun_ptr)(&Game::enter_key_service));
 			continue;
 		}
 		if (event.type == sf::Event::MouseButtonPressed)
@@ -502,12 +499,12 @@ void Game::display_tiles_in_bag()
 
 void Game::display_buttons()
 {
-	exit.display(window);
-	options.display(window);
-	help.display(window);
-	pass.display(window);
-	exchange.display(window);
-	end_turn.display(window);
+	exit_button.display(window);
+	options_button.display(window);
+	help_button.display(window);
+	pass_button.display(window);
+	exchange_button.display(window);
+	confirm_button.display(window);
 }
 
 void Game::display_all()
@@ -636,7 +633,7 @@ bool Game::pass_function()
 
 void Game::exchange_tiles()
 {
-	if (check_tiles_on_board()) //if on the board aren't own tiles 
+	if (check_tiles_on_board()) //if on the board are own tiles 
 	{
 		if(bag.get_language() == Tile::English)
 			create_inf_window(L"Error with tiles!", L"You can't exchange\ntiles, because some\nare on board.", false);
@@ -655,9 +652,39 @@ void Game::exchange_tiles()
 
 		sf::Event event;
 		window.waitEvent(event);
+		bool confirm_button_pressed = false;
 
-		while (event.type != sf::Event::KeyPressed && event.key.code != sf::Keyboard::Enter)
-		{
+		while ((event.key.code != sf::Keyboard::Enter && event.key.code != sf::Keyboard::Escape && !confirm_button_pressed) || event.type == sf::Event::LostFocus || event.key.code == sf::Keyboard::LAlt)
+		{ //waiting for pressed enter, escape key or confirm button
+
+			if (confirm_button.mouse_over(window)) //when mouse is over confirm button
+			{
+				if (!confirm_button.is_iluminating())
+				{
+					confirm_button.iluminate();
+					display_all();
+				}
+
+				while (confirm_button.mouse_over(window) && !confirm_button_pressed)
+				{		//waiting for pressing confirm button
+					window.waitEvent(event);
+					if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left)
+					{
+						confirm_button.reset_iluminate();
+						confirm_button_pressed = true;
+						display_all();
+					}
+				} 
+			}
+			else //when mouse isn't over confirm button
+			{
+				if(confirm_button.is_iluminating())
+				{
+					confirm_button.reset_iluminate();
+					display_all();
+				}	
+			} 
+
 			if (event.type == sf::Event::MouseButtonPressed)
 			{
 				if (event.mouseButton.button == sf::Mouse::Button::Left)
@@ -669,7 +696,7 @@ void Game::exchange_tiles()
 							&&	mouse_position.x < right_border_own_tiles_pix * scale_x
 							&&	mouse_position.y > up_border_own_tiles_pix * scale_y
 							&&	mouse_position.y < down_border_own_tiles_pix * scale_y
-							)  //get tile from own tiles of player
+							)  //choosing tiles to exchange
 					{
 						int index = get_number_own_tile(true);
 						if (players[turn - 1].get_tile(index))
@@ -686,6 +713,7 @@ void Game::exchange_tiles()
 							}
 						}
 					}
+					display_all();
 				}
 			}
 			else if (event.type == sf::Event::Closed)
@@ -713,7 +741,7 @@ void Game::exchange_tiles()
 		else
 		{
 			if (bag.get_language() == Tile::English)
-				create_inf_window(L"No tiles for exchange!", L"You haven't choosed\ntiles for exchange.", false);
+				create_inf_window(L"No tiles for exchange!", L"You haven't choosed\nany tiles \nfor exchange.", false);
 			else
 				create_inf_window(L"Brak liter do wymiany!", L"Nie wybra≥eú\nliter na wymianÍ.", false);
 		}
