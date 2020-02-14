@@ -28,7 +28,6 @@ public:
 	int get_number_of_free_tiles();
 	Tile* exchange_tile(Tile* old_tile);
 
-
 };
 
 #endif

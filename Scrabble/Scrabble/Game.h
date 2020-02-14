@@ -59,6 +59,7 @@ class Game {
 	sf::Event event;
 	
 	typedef bool (Game::*fun_ptr) ();
+	typedef void (Game::*fun_ptr_button_service) (Player&);
 	enum Orientation { upright = 0, horizontally, none, _exception };
 
 	struct EX_not_common_line {};
@@ -99,7 +100,7 @@ class Game {
 	int get_number_own_tile(bool from);
 	//for putting tiles on board
 	
-	void button_service(Button & button, fun_ptr fun);
+	void button_service_control_main(Button & button, fun_ptr fun);
 	bool in_area(sf::Vector2i vec, float left, float right, float up, float down);
 
 	void exchange_tiles();
@@ -157,6 +158,8 @@ class Game {
 	bool enter_key_service();
 	bool pass_function();
 
+
+	bool button_service_exchange(Button &button, Player &player, bool exit, bool &button_pressed);
 
 public:
 	Game();

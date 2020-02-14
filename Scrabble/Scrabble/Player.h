@@ -40,7 +40,8 @@ public:
 	Player & operator+=(int points);
 	Player & operator-=(int points);
 
-	bool any_last_used(int no_free_tails_in_bag);
+	bool any_last_used();
+	void reset_all_last_used_and_outline();
 	int get_no_free_tiles();
 
 	int count_points_from_tiles();

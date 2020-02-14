@@ -396,7 +396,7 @@ void Game::control()
 
 		if (exit_button.mouse_over(window))
 		{
-			button_service(exit_button, (Game::fun_ptr)(&Game::close_window));
+			button_service_control_main(exit_button, (Game::fun_ptr)(&Game::close_window));
 		}
 		else if (options_button.mouse_over(window))
 		{
@@ -408,17 +408,17 @@ void Game::control()
 		}
 		else if (pass_button.mouse_over(window))
 		{
-			button_service(pass_button, (Game::fun_ptr)(&Game::pass_function));
+			button_service_control_main(pass_button, (Game::fun_ptr)(&Game::pass_function));
 			continue;
 		}
 		else if (exchange_button.mouse_over(window))
 		{
-			button_service(exchange_button, (Game::fun_ptr)(&Game::exchange_tiles_main));
+			button_service_control_main(exchange_button, (Game::fun_ptr)(&Game::exchange_tiles_main));
 			continue;
 		}
 		else if (confirm_button.mouse_over(window))
 		{
-			button_service(confirm_button, (Game::fun_ptr)(&Game::enter_key_service));
+			button_service_control_main(confirm_button, (Game::fun_ptr)(&Game::enter_key_service));
 			continue;
 		}
 		if (event.type == sf::Event::MouseButtonPressed)
@@ -471,6 +471,9 @@ void Game::control()
 		}
 		else if (event.type == sf::Event::Closed)
 			window.close();
+	
+		/*confirm_button.reset_iluminate();
+		display_all();*/
 	}
 }
 
@@ -529,7 +532,7 @@ void Game::display_all()
 	window.display();
 }
 
-void Game::button_service(Button & button, fun_ptr fun)
+void Game::button_service_control_main(Button & button, fun_ptr fun)
 {
 	button.iluminate();
 	display_all();
@@ -631,6 +634,53 @@ bool Game::pass_function()
 	}
 }
 
+//return true when exit button is pressed, otherwise return false
+bool Game::button_service_exchange(Button &button, Player &player, bool exit, bool &button_pressed)
+{
+	if (button.mouse_over(window)) //when mouse is over confirm button
+	{
+		if (!button.is_iluminating())
+		{
+			button.iluminate();
+			display_all();
+		}
+
+		while (button.mouse_over(window) && !button_pressed)
+		{		//waiting for pressing confirm button
+			window.waitEvent(event);
+			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left)
+			{
+				button.reset_iluminate();
+				
+				if (exit)
+				{
+					player.reset_all_last_used_and_outline();
+					display_all();
+					return true;
+				}
+				else
+				{
+					button_pressed = true;
+					display_all();
+					button.iluminate();
+					display_all();
+					return false; //return from function
+				}
+			}
+		}
+	}
+	else //when mouse isn't over confirm button
+	{
+		if (button.is_iluminating())
+		{
+			button.reset_iluminate();
+			display_all();
+		}
+	}
+
+	return false; //return from function
+}
+
 void Game::exchange_tiles()
 {
 	if (check_tiles_on_board()) //if on the board are own tiles 
@@ -648,43 +698,23 @@ void Game::exchange_tiles()
 		if (bag.get_language() == Tile::English)
 			create_inf_window(L"Exchange", L"Please select tiles\nfor exchange, \nthen press Enter.", false);
 		else
-			create_inf_window(L"Wymiana", L"Proszê wybraæ litery\ndo wymiany, \nnastêpnie nacisn¹æ \nenter.", false);
+			create_inf_window(L"Wymiana", L"Proszê wybraæ litery\ndo wymiany, \nnastêpnie nacisn¹æ \nenter/zatwierdŸ.", false);
 
 		sf::Event event;
 		window.waitEvent(event);
 		bool confirm_button_pressed = false;
+		bool exit_button_pressed = false;
 
-		while ((event.key.code != sf::Keyboard::Enter && event.key.code != sf::Keyboard::Escape && !confirm_button_pressed) || event.type == sf::Event::LostFocus || event.key.code == sf::Keyboard::LAlt)
+		while ((event.key.code != sf::Keyboard::Enter && !confirm_button_pressed) || event.type == sf::Event::LostFocus || event.key.code == sf::Keyboard::LAlt)
 		{ //waiting for pressed enter, escape key or confirm button
 
-			if (confirm_button.mouse_over(window)) //when mouse is over confirm button
-			{
-				if (!confirm_button.is_iluminating())
-				{
-					confirm_button.iluminate();
-					display_all();
-				}
+			button_service_exchange(confirm_button, players[turn - 1], false, confirm_button_pressed);
 
-				while (confirm_button.mouse_over(window) && !confirm_button_pressed)
-				{		//waiting for pressing confirm button
-					window.waitEvent(event);
-					if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left)
-					{
-						confirm_button.reset_iluminate();
-						confirm_button_pressed = true;
-						display_all();
-					}
-				} 
-			}
-			else //when mouse isn't over confirm button
-			{
-				if(confirm_button.is_iluminating())
-				{
-					confirm_button.reset_iluminate();
-					display_all();
-				}	
-			} 
+			if (button_service_exchange(exit_button, players[turn - 1], true, exit_button_pressed))
+				return;
 
+
+			//service of choosing tiles for exchange
 			if (event.type == sf::Event::MouseButtonPressed)
 			{
 				if (event.mouseButton.button == sf::Mouse::Button::Left)
@@ -716,6 +746,12 @@ void Game::exchange_tiles()
 					display_all();
 				}
 			}
+			else if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Escape)
+			{
+				players[turn - 1].reset_all_last_used_and_outline();
+				display_all();
+				return;
+			}
 			else if (event.type == sf::Event::Closed)
 			{
 				window.close();
@@ -725,7 +761,7 @@ void Game::exchange_tiles()
 			window.waitEvent(event);
 		}
 
-		if (players[turn - 1].any_last_used(bag.get_number_of_free_tiles()))
+		if (players[turn - 1].any_last_used())
 		{
 			if (!check_tiles_on_board())
 			{

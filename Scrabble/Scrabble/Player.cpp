@@ -96,7 +96,7 @@ Player & Player::operator-=(int p)
 	return *this;
 }
 
-bool Player::any_last_used(int no_free_tails_in_bag)
+bool Player::any_last_used()
 {
 	for (int i = 0; i < no_of_tiles_for_player; i++)
 	{
@@ -108,6 +108,18 @@ bool Player::any_last_used(int no_free_tails_in_bag)
 		//empty space in own tiles when bag isn't empty
 	}
 	return false;
+}
+
+void Player::reset_all_last_used_and_outline()
+{
+	for (int i = 0; i < no_of_tiles_for_player; i++)
+	{
+		if (own_tiles[i])
+		{
+			own_tiles[i]->set_last_used(false);
+			own_tiles[i]->reset_outline();
+		}
+	}
 }
 
 std::wstring Player::get_name()
