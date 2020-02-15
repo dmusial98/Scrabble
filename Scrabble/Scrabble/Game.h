@@ -37,6 +37,10 @@
 
 #pragma warning(disable:4996)
 
+class Game;
+
+using fun_ptr_button_service = void (*)(Game*, Button*, bool&);
+
 class Game {
 
 	Field * board[no_of_field][no_of_field];
@@ -46,7 +50,7 @@ class Game {
 	Bag bag;
 	Dictionary* dictionary = nullptr;
 	float scale_x = 1, scale_y = 1;
-	Button confirm_button, exchange_button, help_button, pass_button, options_button, exit_button;
+	Button confirm_button, exchange_button, help_button, pass_button, options_button, exit_button, yes_button, no_button;
 
 	
 	//SFML variables
@@ -59,7 +63,7 @@ class Game {
 	sf::Event event;
 	
 	typedef bool (Game::*fun_ptr) ();
-	typedef void (Game::*fun_ptr_button_service) (Player&);
+	//typedef void (*fun_ptr_button_service) (Game*, Button*, bool);
 	enum Orientation { upright = 0, horizontally, none, _exception };
 
 	struct EX_not_common_line {};
@@ -160,7 +164,7 @@ class Game {
 	bool pass_function();
 
 
-	bool button_service_exchange(Button &button, Player &player, bool exit, bool &button_pressed);
+	void button_service(Button *button, fun_ptr_button_service func, bool &button_pressed);
 
 public:
 	Game();

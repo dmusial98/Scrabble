@@ -258,6 +258,10 @@ void Game::set_buttons()
 		
 		confirm_button.set_text(L"Confirm");
 		confirm_button.set_borders(630.f * scale_y, 670.f * scale_y, 989.f * scale_x, 1150.f * scale_x);
+
+		yes_button.set_text(L"Yes");
+		yes_button.set_borders(150.f * scale_y, 175.f * scale_y, 40.f * scale_x, 70.f * scale_x);
+		yes_button.set_charachter_size(18);
 	}
 	else
 	{
@@ -397,6 +401,7 @@ void Game::control()
 		if (exit_button.mouse_over(window))
 		{
 			button_service_control_main(exit_button, (Game::fun_ptr)(&Game::close_window));
+			continue;
 		}
 		else if (options_button.mouse_over(window))
 		{
@@ -421,6 +426,7 @@ void Game::control()
 			button_service_control_main(confirm_button, (Game::fun_ptr)(&Game::enter_key_service));
 			continue;
 		}
+
 		if (event.type == sf::Event::MouseButtonPressed)
 		{
 			mouse_position = sf::Mouse::getPosition(window);
@@ -631,51 +637,38 @@ bool Game::pass_function()
 	}
 }
 
-//return true when exit button is pressed, otherwise return false
-bool Game::button_service_exchange(Button &button, Player &player, bool exit, bool &button_pressed)
+void Game::button_service(Button *button, fun_ptr_button_service func, bool &button_pressed)
 {
-	if (button.mouse_over(window)) //when mouse is over confirm button
+	if (button->mouse_over(window)) //when mouse is over confirm button
 	{
-		if (!button.is_iluminating())
+		if (!button->is_iluminating())
 		{
-			button.iluminate();
+			button->iluminate();
 			display_all();
 		}
 
-		while (button.mouse_over(window) && !button_pressed)
+		while (button->mouse_over(window) && !button_pressed)
 		{		//waiting for pressing confirm button
 			window.waitEvent(event);
 			if (event.type == sf::Event::MouseButtonPressed && event.mouseButton.button == sf::Mouse::Button::Left)
 			{
-				button.reset_iluminate();
-				
-				if (exit)
-				{
-					player.reset_all_last_used_and_outline();
-					display_all();
-					return true;
-				}
-				else
-				{
-					button_pressed = true;
-					display_all();
-					button.iluminate();
-					display_all();
-					return false; //return from function
-				}
+				button->reset_iluminate();
+
+					(*func)(this, button, button_pressed);
+					return;				
 			}
 		}
 	}
 	else //when mouse isn't over confirm button
 	{
-		if (button.is_iluminating())
+		if (button->is_iluminating())
 		{
-			button.reset_iluminate();
+			button->reset_iluminate();
 			display_all();
 		}
 	}
 
-	return false; //return from function
+	return; //return from function
 }
 
 void Game::exchange_tiles()
@@ -705,11 +698,16 @@ void Game::exchange_tiles()
 		while ((event.key.code != sf::Keyboard::Enter && !confirm_button_pressed) || event.type == sf::Event::LostFocus || event.key.code == sf::Keyboard::LAlt)
 		{ //waiting for pressed enter, escape key or confirm button
 
-			button_service_exchange(confirm_button, players[turn - 1], false, confirm_button_pressed);
+			/*button_service_exchange(confirm_button, players[turn - 1], false, confirm_button_pressed);
 
 			if (button_service_exchange(exit_button, players[turn - 1], true, exit_button_pressed))
-				return;
+				return;*/
+			
+			button_service(&confirm_button, [](Game *game, Button *button, bool &button_pressed) {button_pressed = true; game->display_all(); button->iluminate(); game->display_all(); return; }, confirm_button_pressed);
 
+			button_service(&exit_button, [](Game *game, Button *button, bool &button_pressed) {game->players[game->turn - 1].reset_all_last_used_and_outline(); game->display_all(); button_pressed = true; return; }, exit_button_pressed);
+			if (exit_button_pressed)
+				return;
 
 			//service of choosing tiles for exchange
 			if (event.type == sf::Event::MouseButtonPressed)
@@ -751,7 +749,7 @@ void Game::exchange_tiles()
 			}
 			else if (event.type == sf::Event::Closed)
 			{
-				window.close();
+				create_exit_window();
 			}
 
 			display_all();
@@ -2019,17 +2017,22 @@ void Game::create_exit_window()
 	info_window.draw(menu_sprite);
 	info_window.draw(text);
 	info_window.display();
-	wchar_t letter;
 
-	do
-	{
-		letter = wait_close_event_letter();;
-	} while (letter != *L"y" && letter != *L"n" && letter != *L"t");
 
-	if (letter == *L"y" || letter == *L"t")
-		window.close();
-		
-	info_window.close();
+	while (info_window.isOpen()) {
+		info_window.waitEvent(event);
+		{
+			if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::T || event.key.code == sf::Keyboard::Y || event.key.code == sf::Keyboard::Enter))
+			{
+				info_window.close();
+				window.close();
+			}
+			else if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::N || event.key.code == sf::Keyboard::Escape))
+				info_window.close();
+			else if (event.type == sf::Event::Closed)
+				info_window.close();
+		}
+	}
 }
 
 void Game::display_inc_words(std::vector<std::wstring> &words)

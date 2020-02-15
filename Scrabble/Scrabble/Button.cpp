@@ -63,6 +63,11 @@ bool Button::is_iluminating()
 	return is_iluminating_;
 }
 
+void Button::set_charachter_size(unsigned int size)
+{
+	text.setCharacterSize(size);
+}
+
 void Button::display(sf::RenderWindow & window)
 {
 	window.draw(text);
