@@ -68,7 +68,7 @@ void Button::set_charachter_size(unsigned int size)
 	text.setCharacterSize(size);
 }
 
-void Button::display(sf::RenderWindow & window)
+void Button::draw(sf::RenderWindow & window)
 {
 	window.draw(text);
 }

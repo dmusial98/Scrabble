@@ -260,8 +260,12 @@ void Game::set_buttons()
 		confirm_button.set_borders(630.f * scale_y, 670.f * scale_y, 989.f * scale_x, 1150.f * scale_x);
 
 		yes_button.set_text(L"Yes");
-		yes_button.set_borders(150.f * scale_y, 175.f * scale_y, 40.f * scale_x, 70.f * scale_x);
-		yes_button.set_charachter_size(18);
+		yes_button.set_borders(160.f * scale_y, 190.f * scale_y, 90.f * scale_x, 145.f * scale_x);
+		yes_button.set_charachter_size(29);
+
+		no_button.set_text(L"No");
+		no_button.set_borders(160.f * scale_y, 190.f * scale_y, 225.f * scale_x, 265.f * scale_x);
+		no_button.set_charachter_size(29);
 	}
 	else
 	{
@@ -283,6 +287,15 @@ void Game::set_buttons()
 
 		confirm_button.set_text(L"ZatwierdŸ");
 		confirm_button.set_borders(630.f * scale_y, 670.f * scale_y, 979.f * scale_x, 1170.f * scale_x);
+
+
+		yes_button.set_text(L"Tak");
+		yes_button.set_borders(160.f * scale_y, 190.f * scale_y, 90.f * scale_x, 145.f * scale_x);
+		yes_button.set_charachter_size(29);
+
+		no_button.set_text(L"Nie");
+		no_button.set_borders(160.f * scale_y, 190.f * scale_y, 225.f * scale_x, 275.f * scale_x);
+		no_button.set_charachter_size(29);
 	}
 
 	confirm_button.set_scale(scale_x, scale_y);
@@ -290,6 +303,8 @@ void Game::set_buttons()
 	pass_button.set_scale(scale_x, scale_y);
 	exchange_button.set_scale(scale_x, scale_y);
 	exit_button.set_scale(scale_x, scale_y);
+	yes_button.set_scale(scale_x, scale_y);
+	no_button.set_scale(scale_x, scale_y);
 }
 
 void Game::set_texts_start()
@@ -505,12 +520,12 @@ void Game::display_tiles_in_bag()
 
 void Game::display_buttons()
 {
-	exit_button.display(window);
-	options_button.display(window);
-	help_button.display(window);
-	pass_button.display(window);
-	exchange_button.display(window);
-	confirm_button.display(window);
+	exit_button.draw(window);
+	options_button.draw(window);
+	help_button.draw(window);
+	pass_button.draw(window);
+	exchange_button.draw(window);
+	confirm_button.draw(window);
 }
 
 void Game::display_all()
@@ -637,7 +652,7 @@ bool Game::pass_function()
 	}
 }
 
-void Game::button_service(Button *button, fun_ptr_button_service func, bool &button_pressed)
+void Game::button_service(Button *button, fun_ptr_button_service func, bool &button_pressed, sf::RenderWindow &window)
 {
 	if (button->mouse_over(window)) //when mouse is over confirm button
 	{
@@ -645,6 +660,7 @@ void Game::button_service(Button *button, fun_ptr_button_service func, bool &but
 		{
 			button->iluminate();
 			display_all();
+			display_info_window(true);
 		}
 
 		while (button->mouse_over(window) && !button_pressed)
@@ -654,7 +670,7 @@ void Game::button_service(Button *button, fun_ptr_button_service func, bool &but
 			{
 				button->reset_iluminate();
 
-					(*func)(this, button, button_pressed);
+				(*func)(this, button, button_pressed);
 					return;				
 			}
 		}
@@ -665,6 +681,7 @@ void Game::button_service(Button *button, fun_ptr_button_service func, bool &but
 		{
 			button->reset_iluminate();
 			display_all();
+			display_info_window(true);
 		}
 	}
 
@@ -697,15 +714,10 @@ void Game::exchange_tiles()
 
 		while ((event.key.code != sf::Keyboard::Enter && !confirm_button_pressed) || event.type == sf::Event::LostFocus || event.key.code == sf::Keyboard::LAlt)
 		{ //waiting for pressed enter, escape key or confirm button
-
-			/*button_service_exchange(confirm_button, players[turn - 1], false, confirm_button_pressed);
-
-			if (button_service_exchange(exit_button, players[turn - 1], true, exit_button_pressed))
-				return;*/
 			
-			button_service(&confirm_button, [](Game *game, Button *button, bool &button_pressed) {button_pressed = true; game->display_all(); button->iluminate(); game->display_all(); return; }, confirm_button_pressed);
+			button_service(&confirm_button, [](Game *game, Button *button, bool &button_pressed) {button_pressed = true; game->display_all(); button->iluminate(); game->display_all(); return; }, confirm_button_pressed, window);
 
-			button_service(&exit_button, [](Game *game, Button *button, bool &button_pressed) {game->players[game->turn - 1].reset_all_last_used_and_outline(); game->display_all(); button_pressed = true; return; }, exit_button_pressed);
+			button_service(&exit_button, [](Game *game, Button *button, bool &button_pressed) {game->players[game->turn - 1].reset_all_last_used_and_outline(); game->display_all(); button_pressed = true; return; }, exit_button_pressed, window);
 			if (exit_button_pressed)
 				return;
 
@@ -2001,27 +2013,51 @@ int Game::create_inf_window(std::wstring title, std::wstring comment, bool wait_
 		return wait_close_event_letter();
 }
 
+void Game::display_info_window(bool exit)
+{
+	info_window.draw(menu_sprite);
+	info_window.draw(announcement_text);
+	if (exit)
+	{
+		yes_button.draw(info_window);
+		no_button.draw(info_window);
+	}
+	info_window.display();
+}
+
 void Game::create_exit_window()
 {
 	set_inf_window(L"Exit game");
-	sf::Text text;
 
 	if (bag.get_language() == Tile::Language_ver::English)
-		text.setString(L"Du you want to \nquit the game? \ny - yes   n - no");
+		announcement_text.setString(L"Do you want to \nquit the game?");
 	else
-		text.setString(L"Czy chcesz \nzakoñczyæ grê? \nt - tak  n - nie ");
+		announcement_text.setString(L"Czy chcesz \nzakoñczyæ grê?");
 
-	text.setFont(font);
-	text.setCharacterSize(static_cast<unsigned int>(text.getCharacterSize() * scale_x));
-	text.setPosition(50 * scale_x, 30 * scale_y);
-	info_window.draw(menu_sprite);
-	info_window.draw(text);
-	info_window.display();
+	announcement_text.setFont(font);
+	announcement_text.setCharacterSize(static_cast<unsigned int>(announcement_text.getCharacterSize() * scale_x));
+	announcement_text.setPosition(50 * scale_x, 30 * scale_y);
 
+	display_info_window(true);
 
-	while (info_window.isOpen()) {
-		info_window.waitEvent(event);
+	bool yes_button_pressed = false;
+	bool no_button_pressed = false;
+	
+	while (info_window.isOpen()) 
+	{
+		button_service(&yes_button, [](Game* game, Button* button, bool &button_pressed) {button_pressed = true; game->display_info_window(true);  return; }, yes_button_pressed, info_window);
+		if (yes_button_pressed)
 		{
+			info_window.close();
+			window.close();
+		}
+
+		button_service(&no_button, [](Game* game, Button* button, bool &button_pressed) {button_pressed = true;  return; }, no_button_pressed, info_window);
+		if (no_button_pressed)
+			info_window.close();
+
+		info_window.waitEvent(event);
+		
 			if (event.type == sf::Event::KeyPressed && (event.key.code == sf::Keyboard::T || event.key.code == sf::Keyboard::Y || event.key.code == sf::Keyboard::Enter))
 			{
 				info_window.close();
@@ -2031,7 +2067,6 @@ void Game::create_exit_window()
 				info_window.close();
 			else if (event.type == sf::Event::Closed)
 				info_window.close();
-		}
 	}
 }
 

@@ -3,7 +3,6 @@
 //- Wybór w polskim menu
 //- Po najechaniu na blanku niech wyœwietla informacjê jak¹ literê zastêpuje
 //- Wybrane sprawdzenie
-//- Okno z zapytaniem czy chcesz wyjœæ z gry?
 //
 //- Dodanie licznika czasu
 //
@@ -59,7 +58,7 @@ class Game {
 	sf::RenderWindow window, info_window;
 	sf::Font font;
 	std::vector<sf::Text> players_texts;
-	sf::Text welcome_text, info_text, in_text, tiles_in_bag;
+	sf::Text welcome_text, info_text, in_text, tiles_in_bag, announcement_text;
 	sf::Event event;
 	
 	typedef bool (Game::*fun_ptr) ();
@@ -134,6 +133,7 @@ class Game {
 
 	void create_inf_window(std::vector<std::wstring> &inc_words);
 	int create_inf_window(std::wstring title, std::wstring comment, bool wait_letter);
+	void display_info_window(bool buttons);
 	void create_exit_window();
 	void display_inc_words(std::vector<std::wstring> &words);
 	void set_inf_window(std::wstring name);
@@ -164,7 +164,7 @@ class Game {
 	bool pass_function();
 
 
-	void button_service(Button *button, fun_ptr_button_service func, bool &button_pressed);
+	void button_service(Button *button, fun_ptr_button_service func, bool &button_pressed, sf::RenderWindow & window);
 
 public:
 	Game();

@@ -28,7 +28,7 @@ public:
 	bool is_iluminating();
 	void set_charachter_size(unsigned int size);
 
-	void display(sf::RenderWindow & window);
+	void draw(sf::RenderWindow & window);
 
 };
 
