@@ -38,9 +38,13 @@
 
 class Game;
 
-using fun_ptr_button_service = void (*)(Game*, Button*, bool&);
+typedef void(*fun_ptr_button_service)(Game*, Button*, bool&);
 
 class Game {
+
+	friend void enter_key_service(Game* game, Button* button, bool& button_pressed);
+	friend void pass_function(Game* game, Button* button, bool& button_pressed);
+	friend void exchange_tiles_main(Game* game, Button* button, bool& button_pressed);
 
 	Field * board[no_of_field][no_of_field];
 	std::vector<Player> players;
@@ -61,8 +65,6 @@ class Game {
 	sf::Text welcome_text, info_text, in_text, tiles_in_bag, announcement_text;
 	sf::Event event;
 	
-	typedef bool (Game::*fun_ptr) ();
-	//typedef void (*fun_ptr_button_service) (Game*, Button*, bool);
 	enum Orientation { upright = 0, horizontally, none, _exception };
 
 	struct EX_not_common_line {};
@@ -103,7 +105,7 @@ class Game {
 	int get_number_own_tile(bool from);
 	//for putting tiles on board
 	
-	void button_service_control_main(Button & button, fun_ptr fun);
+
 	bool in_area(sf::Vector2i vec, float left, float right, float up, float down);
 
 	void exchange_tiles();
@@ -138,7 +140,7 @@ class Game {
 	void display_inc_words(std::vector<std::wstring> &words);
 	void set_inf_window(std::wstring name);
 	void wait_close_event();
-	int wait_close_event_letter();
+	int wait_letter_in_close_event_();
 	//tools for creating window with info about errors	
 
 	void reset_outline_own_tiles();
@@ -157,12 +159,6 @@ class Game {
 	void control_board_right(sf::Vector2i & mouse_position);
 	bool control_enter();
 	//controlling through mouse and keyboard 
-
-	bool exchange_tiles_main();
-	bool close_window();
-	bool enter_key_service();
-	bool pass_function();
-
 
 	void button_service(Button *button, fun_ptr_button_service func, bool &button_pressed, sf::RenderWindow & window);
 

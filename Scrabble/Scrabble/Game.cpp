@@ -42,6 +42,64 @@ std::wstring wstring_from_bytes(std::string const& str)
 	return answer;
 }
 
+void enter_key_service(Game * game, Button * button, bool & button_pressed) //arguments are non-used
+{
+	try
+	{
+		if (!game->control_enter())
+			return;
+	}
+	catch (Game::EX_end_game)
+	{
+		game->end_game();
+		//service of end game
+
+		return;
+	}
+	return;
+}
+
+void pass_function(Game* game, Button* button, bool& button_pressed)
+{
+	if (game->check_tiles_on_board())
+	{
+		if (game->bag.get_language() == Tile::English)
+			game->create_inf_window(L"Tiles on board!", L"You can't pass turn,\nbecause some tiles \nare on board.", false);
+		else
+			game->create_inf_window(L"Litery na planszy!", L"Nie mo¿esz oddaæ \nkolejki. Na planszy \nznajduj¹ siê litery.", false);
+		return;
+	}
+	else
+	{
+		if (game->bag.get_language() == Tile::English)
+			std::wcout << game->number++ << L". Player " << game->players[game->turn - 1].get_name() << L" passed turn.\n";
+		else
+			std::wcout << game->number++ << L". Gracz " << game->players[game->turn - 1].get_name() << L" odda³ ruch.\n";
+
+		game->change_turn();
+		return;
+	}
+}
+
+void exchange_tiles_main(Game* game, Button* button, bool& button_pressed)
+{
+	try
+	{
+		game->exchange_tiles();
+	}
+	catch (Bag::EX_empty_bag)
+	{
+		if (game->bag.get_language() == Tile::English)
+			game->create_inf_window(L"Empty bag", L"You can't exchange\ntiles, because \nthe bag is empty.", false);
+		else
+			game->create_inf_window(L"Pusty worek", L"Nie mozesz wymieniæ\nliter, poniewa¿ \nworek jest pusty.", false);
+			game->reset_outline_own_tiles();
+		return;
+	}
+	return;
+}
+
+
 Game::Game()
 {
 	for (int i = 0; i < no_of_field; i++) {
@@ -405,6 +463,11 @@ void Game::set_text_no_tiles_in_bag()
 
 void Game::control()
 {
+	bool exit_button_pressed = false;
+	bool confirm_button_pressed = false;
+	bool pass_button_pressed = false;
+	bool exchange_button_pressed = false;
+
 	while (window.isOpen()) {
 
 		sf::Vector2i mouse_position;
@@ -413,35 +476,19 @@ void Game::control()
 		display_all();
 		window.waitEvent(event);
 
-		if (exit_button.mouse_over(window))
+		button_service(&exit_button, [](Game* game, Button *button, bool &button_pressed) {button_pressed = true; return; }, exit_button_pressed, window);
+		if (exit_button_pressed)
 		{
-			button_service_control_main(exit_button, (Game::fun_ptr)(&Game::close_window));
-			continue;
-		}
-		else if (options_button.mouse_over(window))
-		{
-			//wywolanie okna z zapisem gry, zatrzymniem czasu itd.
-		}
-		else if (help_button.mouse_over(window))
-		{
-			//wyswietlenie okna z pomoca - zasady, sterowanie itd.
-		}
-		else if (pass_button.mouse_over(window))
-		{
-			button_service_control_main(pass_button, (Game::fun_ptr)(&Game::pass_function));
-			continue;
-		}
-		else if (exchange_button.mouse_over(window))
-		{
-			button_service_control_main(exchange_button, (Game::fun_ptr)(&Game::exchange_tiles_main));
-			continue;
-		}
-		else if (confirm_button.mouse_over(window))
-		{
-			button_service_control_main(confirm_button, (Game::fun_ptr)(&Game::enter_key_service));
-			continue;
+			exit_button_pressed = false;
+			create_exit_window();
 		}
 
+		button_service(&confirm_button, (fun_ptr_button_service)(&enter_key_service), confirm_button_pressed, window);
+		
+		button_service(&pass_button, pass_function, pass_button_pressed, window);
+			
+		button_service(&exchange_button, exchange_tiles_main, exchange_button_pressed, window);
+			
 		if (event.type == sf::Event::MouseButtonPressed)
 		{
 			mouse_position = sf::Mouse::getPosition(window);
@@ -477,17 +524,18 @@ void Game::control()
 				create_exit_window();
 			else if (event.key.code == sf::Keyboard::Enter)
 			{
-				if (enter_key_service())
-					continue;
+				enter_key_service(this, &confirm_button, confirm_button_pressed); //arguments aren't used
+				continue;
+					
 			}
 			else if (event.key.code == sf::Keyboard::E)
 			{
-				if (exchange_tiles_main())
-					continue;
+				exchange_tiles_main(this, &exchange_button, exchange_button_pressed); //arguments aren't used
+				continue;
 			}
 			else if (event.key.code == sf::Keyboard::P)
 			{
-				pass_function();
+				pass_function(this, &pass_button, pass_button_pressed); //arguments aren't used
 			}
 		}
 		else if (event.type == sf::Event::Closed)
@@ -550,32 +598,6 @@ void Game::display_all()
 	window.display();
 }
 
-void Game::button_service_control_main(Button & button, fun_ptr fun)
-{
-	button.iluminate();
-	display_all();
-	while (button.mouse_over(window))
-	{
-		window.waitEvent(event);
-		if (event.type == sf::Event::MouseButtonPressed)
-		{
-			if (event.mouseButton.button == sf::Mouse::Button::Left)
-			{
-				button.reset_iluminate();
-				if ((this->*fun)())
-				{
-					button.reset_iluminate();
-					display_all();
-				}
-				else 
-					return;
-			}
-		}
-	}
-	button.reset_iluminate();
-	display_all();
-}
-
 bool Game::in_area(sf::Vector2i vec, float left, float right, float up, float down)
 {
 	if (
@@ -587,69 +609,6 @@ bool Game::in_area(sf::Vector2i vec, float left, float right, float up, float do
 		return true;
 	else
 		return false;
-}
-
-bool Game::exchange_tiles_main()
-{
-	try
-	{
-		exchange_tiles();
-	}
-	catch (Bag::EX_empty_bag)
-	{	
-		if(bag.get_language() == Tile::English)
-			create_inf_window(L"Empty bag", L"You can't exchange\ntiles, because \nthe bag is empty.", false);
-		else 
-			create_inf_window(L"Pusty worek", L"Nie mozesz wymieniæ\nliter, poniewa¿ \nworek jest pusty.", false);
-		reset_outline_own_tiles();
-		return true;
-	}
-	return false;
-}
-
-bool Game::close_window()
-{
-	create_exit_window();
-	return false;
-}
-
-bool Game::enter_key_service()
-{
-	try
-	{
-		if (!control_enter())
-			return true;
-	}
-	catch (EX_end_game)
-	{
-		end_game();
-		//service of end game
-
-		return true;
-	}
-	return false;
-}
-
-bool Game::pass_function()
-{
-	if (check_tiles_on_board())
-	{ 
-		if (bag.get_language() == Tile::English)
-			create_inf_window(L"Tiles on board!", L"You can't pass turn,\nbecause some tiles \nare on board.", false);
-		else 
-			create_inf_window(L"Litery na planszy!", L"Nie mo¿esz oddaæ \nkolejki. Na planszy \nznajduj¹ siê litery.", false);
-		return true;
-	}
-	else
-	{
-		if(bag.get_language() == Tile::English)
-			std::wcout << number++ << L". Player " << players[turn - 1].get_name() << L" passed turn.\n";
-		else
-			std::wcout << number++ << L". Gracz " << players[turn - 1].get_name() << L" odda³ ruch.\n";
-		
-		change_turn();
-		return false;
-	}
 }
 
 void Game::button_service(Button *button, fun_ptr_button_service func, bool &button_pressed, sf::RenderWindow &window)
@@ -1488,7 +1447,7 @@ void Game::wait_close_event()
 	sf::Event event;
 
 	while (info_window.isOpen()) {
-		info_window.pollEvent(event);
+		info_window.waitEvent(event);
 		{
 			if (event.type == sf::Event::KeyPressed)
 			{
@@ -1505,7 +1464,7 @@ void Game::wait_close_event()
 	}
 }
 
-int Game::wait_close_event_letter()
+int Game::wait_letter_in_close_event_()
 {
 	sf::Event event;
 
@@ -1995,14 +1954,11 @@ bool Game::control_enter()
 int Game::create_inf_window(std::wstring title, std::wstring comment, bool wait_letter)
 {
 	set_inf_window(title);
-	sf::Text text;
-	text.setString(comment);
-	text.setFont(font);
-	text.setCharacterSize(static_cast<unsigned int>(text.getCharacterSize() * scale_x));
-	text.setPosition(50 * scale_x, 30 * scale_y);
-	info_window.draw(menu_sprite);
-	info_window.draw(text);
-	info_window.display();
+	announcement_text.setString(comment);
+	announcement_text.setFont(font);
+	announcement_text.setCharacterSize(static_cast<unsigned int>(announcement_text.getCharacterSize() * scale_x));
+	announcement_text.setPosition(50 * scale_x, 30 * scale_y);
+	display_info_window(false);
 	if (!wait_letter)
 	{
 		wait_close_event();
@@ -2010,7 +1966,7 @@ int Game::create_inf_window(std::wstring title, std::wstring comment, bool wait_
 		return 0; //returnig value doesn't matter in this situation
 	}
 	else 
-		return wait_close_event_letter();
+		return wait_letter_in_close_event_();
 }
 
 void Game::display_info_window(bool exit)
