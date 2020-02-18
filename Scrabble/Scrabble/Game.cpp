@@ -99,7 +99,6 @@ void exchange_tiles_main(Game* game, Button* button, bool& button_pressed)
 	return;
 }
 
-
 Game::Game()
 {
 	for (int i = 0; i < no_of_field; i++) {

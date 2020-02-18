@@ -138,7 +138,7 @@ Bag::Bag()
 		temp_num++;
 	}
 
-	temp_num = 0;
+	/*temp_num = 0;
 	for (int i = 0; i < a_number_pl; i++) {
 		pl_tiles[temp_num] = new Tile(L'a', a_value_pl, Tile::Language_ver::Polish);
 		temp_num++;
@@ -271,7 +271,7 @@ Bag::Bag()
 	{
 		pl_tiles[temp_num] = new Tile(0, 0, Tile::Language_ver::Polish);
 		temp_num++;
-	}
+	}*/
 }
 
 Bag::~Bag()
