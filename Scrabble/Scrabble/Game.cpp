@@ -42,6 +42,7 @@ std::wstring wstring_from_bytes(std::string const& str)
 	return answer;
 }
 
+//friend functions
 void enter_key_service(Game * game, Button * button, bool & button_pressed) //arguments are non-used
 {
 	try
@@ -98,6 +99,8 @@ void exchange_tiles_main(Game* game, Button* button, bool& button_pressed)
 	}
 	return;
 }
+
+
 
 Game::Game()
 {
