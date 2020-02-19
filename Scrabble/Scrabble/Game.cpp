@@ -1958,7 +1958,7 @@ int Game::create_inf_window(std::wstring title, std::wstring comment, bool wait_
 	set_inf_window(title);
 	announcement_text.setString(comment);
 	announcement_text.setFont(font);
-	announcement_text.setCharacterSize(static_cast<unsigned int>(announcement_text.getCharacterSize() * scale_x));
+	announcement_text.setCharacterSize(30 * scale_x);
 	announcement_text.setPosition(50 * scale_x, 30 * scale_y);
 	display_info_window(false);
 	if (!wait_letter)
@@ -1999,7 +1999,7 @@ void Game::create_exit_window()
 	}
 
 	announcement_text.setFont(font);
-	announcement_text.setCharacterSize(static_cast<unsigned int>(announcement_text.getCharacterSize() * scale_x));
+	announcement_text.setCharacterSize(30 * scale_x);
 	announcement_text.setPosition(50 * scale_x, 30 * scale_y);
 
 	display_info_window(true);
