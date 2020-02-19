@@ -1985,12 +1985,18 @@ void Game::display_info_window(bool exit)
 
 void Game::create_exit_window()
 {
-	set_inf_window(L"Exit game");
+	
 
 	if (bag.get_language() == Tile::Language_ver::English)
+	{
+		set_inf_window(L"Exit game");
 		announcement_text.setString(L"Do you want to \nquit the game?");
+	}
 	else
+	{
+		set_inf_window(L"Wyjœcie z gry");
 		announcement_text.setString(L"Czy chcesz \nzakoñczyæ grê?");
+	}
 
 	announcement_text.setFont(font);
 	announcement_text.setCharacterSize(static_cast<unsigned int>(announcement_text.getCharacterSize() * scale_x));
